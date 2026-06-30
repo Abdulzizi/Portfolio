@@ -1,15 +1,5 @@
-const ITEMS = [
-  "Fullstack",
-  "Mobile",
-  "APIs",
-  "Infrastructure",
-  "Data",
-  "AI & Data Science",
-  "Available now",
-];
-
-export function Marquee() {
-  const track = ITEMS.flatMap((m, i) => [
+export function Marquee({ items }: { items: string[] }) {
+  const track = items.flatMap((m, i) => [
     <span key={`m-${i}`} className={i % 3 === 2 ? "a" : ""}>
       {m}
     </span>,

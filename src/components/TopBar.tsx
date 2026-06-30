@@ -3,7 +3,9 @@
 import { useTheme } from "./ThemeProvider";
 
 export function TopBar({
+  availability,
 }: {
+  availability: string;
 }) {
   const { theme, toggle } = useTheme();
 
@@ -13,7 +15,7 @@ export function TopBar({
       <div className="right">
         <div className="status">
           <span className="dot" />
-          Open for work
+          {availability}
         </div>
         <button
           className={`bar-btn ${theme === "dark" ? "active" : ""}`}
