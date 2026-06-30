@@ -136,7 +136,7 @@ export function HomePage() {
       <footer className="site-footer">
         <span>&copy; 2026 Abdul Jawad Azizi</span>
         <span>Built with Next.js</span>
-        <span>Try the Inspect switch &nearr;</span>
+
       </footer>
     </>
   );
