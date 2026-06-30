@@ -10,7 +10,27 @@ import { Capabilities } from "./Capabilities";
 import { CustomCursor } from "./CustomCursor";
 import { SmoothScroll } from "./SmoothScroll";
 
-export function HomePage() {
+type SiteSettings = {
+  kickerItems: string[] | null;
+  cycleWords: string[];
+  availabilityText: string | null;
+  marqueeItems: string[];
+  socialLinks: Record<string, string> | null;
+} | null;
+
+type Capability = {
+  id: string;
+  order: number;
+  heading: string;
+  description: string;
+};
+
+type Props = {
+  settings: SiteSettings;
+  capabilities: Capability[];
+};
+
+export function HomePage({ settings, capabilities }: Props) {
   const [inspect, setInspect] = useState(false);
 
   const toggleInspect = useCallback(() => setInspect((v) => !v), []);
@@ -33,25 +53,35 @@ export function HomePage() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  const kicker = (settings?.kickerItems as string[]) ?? [
+    "Independent Software Developer", "/", "Jakarta, GMT +7", "/", "Est. 2022",
+  ];
+  const cycleWords = settings?.cycleWords ?? ["calm", "durable", "honest", "quiet", "careful"];
+  const marqueeItems = settings?.marqueeItems ?? ["Fullstack", "Mobile", "APIs", "Infrastructure", "Data", "AI & Data Science", "Available now"];
+  const availability = settings?.availabilityText ?? "Open for work";
+  const socials = (settings?.socialLinks as Record<string, string>) ?? {
+    email: "jawadabdul307@gmail.com",
+    github: "https://github.com/Abdulzizi",
+    linkedin: "#",
+  };
+
   return (
     <>
       <SmoothScroll />
       <CustomCursor />
-      <TopBar />
+      <TopBar availability={availability} />
 
       {/* Hero */}
       <section className="hero pad" data-x="section#hero">
         <div className="kicker">
-          <span>Independent Software Developer</span>
-          <span>/</span>
-          <span>Jakarta, GMT +7</span>
-          <span>/</span>
-          <span>Est. 2022</span>
+          {kicker.map((item, i) => (
+            <span key={i}>{item}</span>
+          ))}
         </div>
         <h1 data-x="h1">
           A solo developer
           <br />
-          building <CyclingWord />
+          building <CyclingWord words={cycleWords} />
           <br />
           software.
         </h1>
@@ -70,12 +100,12 @@ export function HomePage() {
             Working since<b>2022, four years</b>
           </div>
           <div>
-            Availability<b>Open for work</b>
+            Availability<b>{availability}</b>
           </div>
         </div>
       </section>
 
-      <Marquee />
+      <Marquee items={marqueeItems} />
       <WorkSection />
 
       {/* About */}
@@ -109,24 +139,24 @@ export function HomePage() {
         </div>
       </section>
 
-      <Capabilities />
+      <Capabilities items={capabilities} />
 
       {/* Contact */}
       <section className="contact pad" id="contact" data-x="section#contact">
         <div className="lead">004 / Let&apos;s work together</div>
-        <a className="big" href="mailto:jawadabdul307@gmail.com">
+        <a className="big" href={`mailto:${socials.email}`}>
           Say hello<span className="ar">&rarr;</span>
         </a>
         <div className="links">
-          <a href="mailto:jawadabdul307@gmail.com">
+          <a href={`mailto:${socials.email}`}>
             <span className="k">Email</span>
-            <span className="v">jawadabdul307@gmail.com</span>
+            <span className="v">{socials.email}</span>
           </a>
-          <a href="https://github.com/Abdulzizi">
+          <a href={socials.github}>
             <span className="k">GitHub</span>
-            <span className="v">github.com/Abdulzizi</span>
+            <span className="v">{socials.github?.replace("https://", "")}</span>
           </a>
-          <a href="#">
+          <a href={socials.linkedin}>
             <span className="k">LinkedIn</span>
             <span className="v">Abdul Jawad Azizi</span>
           </a>
@@ -136,7 +166,6 @@ export function HomePage() {
       <footer className="site-footer">
         <span>&copy; 2026 Abdul Jawad Azizi</span>
         <span>Built with Next.js</span>
-
       </footer>
     </>
   );
