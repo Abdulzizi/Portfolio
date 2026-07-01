@@ -2,9 +2,14 @@ import { prisma } from "@/lib/db";
 import { HomePage } from "@/components/HomePage";
 
 export default async function Page() {
-  const [rawSettings, capabilities] = await Promise.all([
+  const [rawSettings, capabilities, projects] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
     prisma.capability.findMany({ orderBy: { order: "asc" } }),
+    prisma.project.findMany({
+      where: { visibility: "published" },
+      orderBy: [{ isFeatured: "desc" }, { year: "desc" }],
+      select: { id: true, slug: true, name: true, kind: true, year: true, tint: true },
+    }),
   ]);
 
   const settings = rawSettings
@@ -17,5 +22,5 @@ export default async function Page() {
       }
     : null;
 
-  return <HomePage settings={settings} capabilities={capabilities} />;
+  return <HomePage settings={settings} capabilities={capabilities} projects={projects} />;
 }

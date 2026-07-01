@@ -25,12 +25,22 @@ type Capability = {
   description: string;
 };
 
+type Project = {
+  id: string;
+  slug: string;
+  name: string;
+  kind: string | null;
+  year: number;
+  tint: string | null;
+};
+
 type Props = {
   settings: SiteSettings;
   capabilities: Capability[];
+  projects: Project[];
 };
 
-export function HomePage({ settings, capabilities }: Props) {
+export function HomePage({ settings, capabilities, projects }: Props) {
   const [inspect, setInspect] = useState(false);
 
   const toggleInspect = useCallback(() => setInspect((v) => !v), []);
@@ -106,7 +116,7 @@ export function HomePage({ settings, capabilities }: Props) {
       </section>
 
       <Marquee items={marqueeItems} />
-      <WorkSection />
+      <WorkSection projects={projects} />
 
       {/* About */}
       <section className="about pad" id="about" data-x="section#about">
