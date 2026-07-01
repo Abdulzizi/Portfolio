@@ -9,6 +9,11 @@ export function CustomCursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    document.documentElement.setAttribute("data-custom-cursor", "");
+    return () => { document.documentElement.removeAttribute("data-custom-cursor"); };
+  }, []);
+
+  useEffect(() => {
     let raf: number;
 
     const onMove = (e: MouseEvent) => {

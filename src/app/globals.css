@@ -26,11 +26,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* ---- Custom Cursor ---- */
-html, body, *, *::before, *::after {
-  cursor: none !important;
-}
-a, button, [role="button"], input, textarea, select {
+/* ---- Custom Cursor (only when present) ---- */
+html[data-custom-cursor],
+html[data-custom-cursor] *,
+html[data-custom-cursor] *::before,
+html[data-custom-cursor] *::after {
   cursor: none !important;
 }
 
