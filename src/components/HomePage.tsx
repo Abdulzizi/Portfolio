@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from "react";
 import { useState } from "react";
+import Link from "next/link";
 import { TopBar } from "./TopBar";
 import { CyclingWord } from "./CyclingWord";
 import { Marquee } from "./Marquee";
@@ -34,13 +35,21 @@ type Project = {
   tint: string | null;
 };
 
+type Post = {
+  id: string;
+  slug: string;
+  title: string;
+  publishedAt: Date | null;
+};
+
 type Props = {
   settings: SiteSettings;
   capabilities: Capability[];
   projects: Project[];
+  posts: Post[];
 };
 
-export function HomePage({ settings, capabilities, projects }: Props) {
+export function HomePage({ settings, capabilities, projects, posts }: Props) {
   const [inspect, setInspect] = useState(false);
 
   const toggleInspect = useCallback(() => setInspect((v) => !v), []);
@@ -117,6 +126,69 @@ export function HomePage({ settings, capabilities, projects }: Props) {
 
       <Marquee items={marqueeItems} />
       <WorkSection projects={projects} />
+
+      {/* Journal */}
+      <section className="pad" id="journal" data-x="section#journal">
+        <div className="sec-head">
+          <span className="t">002 / Journal</span>
+          <span className="c">{posts.length > 0 ? `${posts.length} post${posts.length === 1 ? "" : "s"}` : "Coming soon"}</span>
+        </div>
+        {posts.length === 0 ? (
+          <p style={{ color: "var(--muted)", fontSize: "15px" }}>No posts yet.</p>
+        ) : (
+          <div style={{ borderTop: "1px solid var(--line)" }}>
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/blog/${post.slug}`}
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  justifyContent: "space-between",
+                  padding: "14px 0",
+                  borderBottom: "1px solid var(--line)",
+                  color: "var(--ink)",
+                  textDecoration: "none",
+                }}
+              >
+                <span style={{ fontSize: "16px", fontWeight: 600 }}>{post.title}</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-geist-mono), monospace",
+                    fontSize: "11px",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    color: "var(--muted)",
+                  }}
+                >
+                  {post.publishedAt
+                    ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      })
+                    : ""}
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
+        <div style={{ textAlign: "right", marginTop: "16px" }}>
+          <Link
+            href="/blog"
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              borderBottom: "1px solid var(--line)",
+            }}
+          >
+            View all posts
+          </Link>
+        </div>
+      </section>
 
       {/* About */}
       <section className="about pad" id="about" data-x="section#about">
