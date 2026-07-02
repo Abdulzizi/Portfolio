@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { HomePage } from "@/components/HomePage";
+
+export const metadata: Metadata = {
+  title: "A. J. Azizi | Solo Developer",
+};
 
 export default async function Page() {
   const [rawSettings, capabilities, projects, posts] = await Promise.all([

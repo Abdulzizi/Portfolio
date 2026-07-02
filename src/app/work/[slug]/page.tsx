@@ -1,6 +1,29 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const project = await prisma.project.findUnique({
+    where: { slug, visibility: "published" },
+    select: { name: true, kind: true },
+  });
+
+  if (!project) {
+    return {};
+  }
+
+  return {
+    title: project.name,
+    description: project.kind ?? undefined,
+  };
+}
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
