@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 
 export default async function AdminDashboard() {
@@ -74,6 +75,70 @@ export default async function AdminDashboard() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "1px",
+          background: "var(--line)",
+          border: "1px solid var(--line)",
+          marginTop: "1px",
+        }}
+      >
+        <Link
+          href="/admin/projects"
+          style={{
+            padding: "24px 20px",
+            background: "var(--paper)",
+            display: "block",
+            color: "var(--ink)",
+            textDecoration: "none",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Manage
+          </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+            Projects
+          </div>
+        </Link>
+        <Link
+          href="/admin/posts"
+          style={{
+            padding: "24px 20px",
+            background: "var(--paper)",
+            display: "block",
+            color: "var(--ink)",
+            textDecoration: "none",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Manage
+          </div>
+          <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+            Posts
+          </div>
+        </Link>
       </div>
     </div>
   );
