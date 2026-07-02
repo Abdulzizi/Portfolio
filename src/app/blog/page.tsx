@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Blog",
+};
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {

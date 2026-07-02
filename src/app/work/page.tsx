@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Work",
+};
 
 export default async function WorkPage() {
   const projects = await prisma.project.findMany({

@@ -15,9 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Abdul Jawad Azizi — Independent Developer",
+  metadataBase: new URL("https://ajazizi.dev"),
+  title: {
+    template: "%s | A. J. Azizi",
+    default: "A. J. Azizi | Solo Developer",
+  },
   description:
-    "A solo developer building calm software. Fullstack, mobile, and data work for small teams.",
+    "Independent software developer building web, mobile, and data science products. Based in Jakarta.",
 };
 
 export default function RootLayout({
