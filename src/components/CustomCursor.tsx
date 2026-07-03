@@ -9,6 +9,8 @@ export function CustomCursor() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
     document.documentElement.setAttribute("data-custom-cursor", "");
     return () => { document.documentElement.removeAttribute("data-custom-cursor"); };
   }, []);

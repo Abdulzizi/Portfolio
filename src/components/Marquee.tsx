@@ -1,4 +1,15 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export function Marquee({ items }: { items: string[] }) {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+  }, []);
+
   const track = items.flatMap((m, i) => [
     <span key={`m-${i}`} className={i % 3 === 2 ? "a" : ""}>
       {m}
@@ -9,10 +20,10 @@ export function Marquee({ items }: { items: string[] }) {
   ]);
 
   return (
-    <div className="marq" data-x="marquee">
-      <div className="track">
+    <div className="marq" data-x="marquee" aria-label={items.join(", ")}>
+      <div className="track" style={reducedMotion ? { animationPlayState: "paused" } : undefined}>
         {track}
-        {track}
+        {reducedMotion ? null : track}
       </div>
     </div>
   );

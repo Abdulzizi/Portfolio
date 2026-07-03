@@ -2,6 +2,28 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { generateHTML } from "@tiptap/core";
+import type { JSONContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import TiptapLink from "@tiptap/extension-link";
+import TiptapImage from "@tiptap/extension-image";
+
+function renderContent(content: unknown): string | null {
+  if (!content || typeof content !== "object") return null;
+  const json = content as JSONContent;
+  if (!json.content || json.content.length === 0) return null;
+
+  try {
+    const html = generateHTML(json, [
+      StarterKit.configure({ heading: { levels: [2, 3] } }),
+      TiptapLink,
+      TiptapImage,
+    ]);
+    return html.trim().length > 0 ? html : null;
+  } catch {
+    return null;
+  }
+}
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -43,6 +65,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   if (!post) notFound();
 
+  const renderedContent = renderContent(post.content);
+
   return (
     <div className="bp-page">
       <main className="bp-main">
@@ -76,10 +100,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </header>
 
         <section className="bp-body pad">
-          <div className="bp-placeholder">
-            <span className="bp-placeholder-label mono">Article</span>
-            <p className="bp-placeholder-note">Full article coming soon.</p>
-          </div>
+          {renderedContent ? (
+            <div className="bp-prose" dangerouslySetInnerHTML={{ __html: renderedContent }} />
+          ) : (
+            <div className="bp-placeholder">
+              <span className="bp-placeholder-label mono">Article</span>
+              <p className="bp-placeholder-note">Full article coming soon.</p>
+            </div>
+          )}
         </section>
       </main>
 

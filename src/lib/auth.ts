@@ -2,7 +2,11 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 
-const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret && process.env.NODE_ENV === "production") {
+  throw new Error("JWT_SECRET environment variable is required");
+}
+const secret = new TextEncoder().encode(jwtSecret || "dev-secret-change-me");
 const COOKIE_NAME = "admin_session";
 
 const ADMIN_HASH = "$2b$10$y4x0CG/dokTTheJpVMY4EuOTaSnm2RTQC7uOCZLUfb3oqDm2hk4dC";
