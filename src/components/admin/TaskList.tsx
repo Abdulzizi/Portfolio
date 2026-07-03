@@ -130,7 +130,11 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
                 {t.priority}
               </span>
               <button
-                onClick={() => deleteTask(t.id, projectId)}
+                onClick={() => {
+                  if (window.confirm("Delete this task?")) {
+                    deleteTask(t.id, projectId);
+                  }
+                }}
                 style={{
                   padding: "4px 8px",
                   fontSize: "10px",

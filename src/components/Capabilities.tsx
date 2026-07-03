@@ -9,7 +9,7 @@ export function Capabilities({ items }: { items: Capability[] }) {
   return (
     <section className="caps pad" id="caps" data-x="section#caps">
       <div className="sec-head">
-        <span className="t">003 / What I do</span>
+        <span className="t">004 / What I do</span>
         <span className="c">Six things, one practice</span>
       </div>
       <div className="grid">

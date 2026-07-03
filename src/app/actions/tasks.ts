@@ -13,24 +13,29 @@ async function requireAuth() {
 export async function createTask(projectId: string, formData: FormData) {
   await requireAuth();
 
-  const title = formData.get("title") as string;
+  const title = (formData.get("title") as string)?.trim();
+  if (!title) return { error: "Title is required" };
+
   const status = (formData.get("status") as TaskStatus) || "todo";
   const priority = (formData.get("priority") as TaskPriority) || "medium";
   const dueDate = formData.get("dueDate") as string;
   const notes = formData.get("notes") as string;
 
-  await prisma.task.create({
-    data: {
-      projectId,
-      title,
-      status,
-      priority,
-      dueDate: dueDate ? new Date(dueDate) : null,
-      notes: notes || null,
-    },
-  });
-
-  revalidatePath(`/admin/projects/${projectId}`);
+  try {
+    await prisma.task.create({
+      data: {
+        projectId,
+        title,
+        status,
+        priority,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        notes: notes || null,
+      },
+    });
+    revalidatePath(`/admin/projects/${projectId}`);
+  } catch {
+    return { error: "Failed to create task." };
+  }
 }
 
 export async function updateTask(id: string, projectId: string, formData: FormData) {
@@ -42,32 +47,43 @@ export async function updateTask(id: string, projectId: string, formData: FormDa
   const dueDate = formData.get("dueDate") as string;
   const notes = formData.get("notes") as string;
 
-  await prisma.task.update({
-    where: { id },
-    data: {
-      title,
-      status,
-      priority,
-      dueDate: dueDate ? new Date(dueDate) : null,
-      notes: notes || null,
-    },
-  });
-
-  revalidatePath(`/admin/projects/${projectId}`);
+  try {
+    await prisma.task.update({
+      where: { id },
+      data: {
+        title,
+        status,
+        priority,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        notes: notes || null,
+      },
+    });
+    revalidatePath(`/admin/projects/${projectId}`);
+  } catch {
+    return { error: "Failed to update task." };
+  }
 }
 
 export async function deleteTask(id: string, projectId: string) {
   await requireAuth();
-  await prisma.task.delete({ where: { id } });
-  revalidatePath(`/admin/projects/${projectId}`);
+  try {
+    await prisma.task.delete({ where: { id } });
+    revalidatePath(`/admin/projects/${projectId}`);
+  } catch {
+    return { error: "Failed to delete task." };
+  }
 }
 
 export async function toggleTaskStatus(id: string, projectId: string) {
   await requireAuth();
-  const task = await prisma.task.findUnique({ where: { id } });
-  if (!task) return;
+  try {
+    const task = await prisma.task.findUnique({ where: { id } });
+    if (!task) return { error: "Task not found" };
 
-  const next: TaskStatus = task.status === "done" ? "todo" : task.status === "todo" ? "doing" : "done";
-  await prisma.task.update({ where: { id }, data: { status: next } });
-  revalidatePath(`/admin/projects/${projectId}`);
+    const next: TaskStatus = task.status === "done" ? "todo" : task.status === "todo" ? "doing" : "done";
+    await prisma.task.update({ where: { id }, data: { status: next } });
+    revalidatePath(`/admin/projects/${projectId}`);
+  } catch {
+    return { error: "Failed to toggle task status." };
+  }
 }

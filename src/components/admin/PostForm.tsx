@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { createPost, updatePost, deletePost } from "@/app/actions/posts";
 import { useState } from "react";
+import { TipTapEditor } from "@/components/admin/TipTapEditor";
+import type { JSONContent } from "@tiptap/react";
 
 const labelStyle: React.CSSProperties = {
   fontFamily: "var(--font-geist-mono), monospace",
@@ -39,6 +41,7 @@ type Post = {
   title: string;
   excerpt: string | null;
   status: string;
+  content?: unknown;
   tags: { tag: { name: string } }[];
 } | null;
 
@@ -74,6 +77,11 @@ export function PostForm({ post }: { post?: Post }) {
       <div>
         <label style={labelStyle}>Excerpt</label>
         <textarea name="excerpt" rows={3} defaultValue={post?.excerpt ?? ""} style={{ ...inputStyle, resize: "vertical" }} />
+      </div>
+
+      <div>
+        <label style={labelStyle}>Content</label>
+        <TipTapEditor content={(post?.content as JSONContent | null) ?? null} name="content" />
       </div>
 
       <div>
@@ -118,7 +126,11 @@ export function PostForm({ post }: { post?: Post }) {
         {isEdit && (
           <button
             type="button"
-            onClick={() => deletePost(post!.id)}
+            onClick={() => {
+              if (window.confirm("Delete this post? This cannot be undone.")) {
+                deletePost(post!.id);
+              }
+            }}
             style={{
               marginLeft: "auto",
               padding: "12px 20px",

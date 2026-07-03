@@ -167,7 +167,11 @@ export function ProjectForm({ project }: { project?: Project }) {
         {isEdit && (
           <button
             type="button"
-            onClick={() => deleteProject(project!.id)}
+            onClick={() => {
+              if (window.confirm("Delete this project and all its tasks? This cannot be undone.")) {
+                deleteProject(project!.id);
+              }
+            }}
             style={{
               marginLeft: "auto",
               padding: "12px 20px",
