@@ -16,7 +16,7 @@ export default async function ProjectsPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
+      <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
         <div>
           <div
             style={{
@@ -69,6 +69,7 @@ export default async function ProjectsPage() {
         <div style={{ border: "1px solid var(--line)" }}>
           {projects.map((p) => (
             <Link
+              className="admin-list-row"
               key={p.id}
               href={`/admin/projects/${p.id}`}
               style={{

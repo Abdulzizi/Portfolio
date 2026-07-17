@@ -46,6 +46,7 @@ function ToolbarButton({
 }) {
   return (
     <button
+      className="admin-editor-button"
       type="button"
       onClick={onClick}
       disabled={disabled}
