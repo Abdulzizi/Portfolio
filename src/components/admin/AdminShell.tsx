@@ -42,7 +42,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
           <nav className="admin-nav" style={{ display: "flex", flexDirection: "column" }}>
             {NAV.map((item) => {
-              const active = pathname === item.href;
+              const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}

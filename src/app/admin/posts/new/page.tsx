@@ -1,6 +1,9 @@
 import { PostForm } from "@/components/admin/PostForm";
+import { requirePageAuth } from "@/lib/auth";
 
-export default function NewPostPage() {
+export default async function NewPostPage() {
+  await requirePageAuth();
+
   return (
     <div>
       <div

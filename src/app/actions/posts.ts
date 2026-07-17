@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import type { PostStatus } from "@/generated/prisma/client";
 
+const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
+
 async function requireAuth() {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
@@ -21,14 +23,16 @@ function slugify(text: string) {
 function parseContent(contentRaw: FormDataEntryValue | null) {
   if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim()) return undefined;
   try {
-    return JSON.parse(contentRaw);
+    const parsed = JSON.parse(contentRaw);
+    if (typeof parsed !== "object" || parsed === null || !("type" in parsed)) return undefined;
+    return parsed;
   } catch {
     return undefined;
   }
 }
 
 async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  let slug = base || `post-${Date.now()}`;
+  const slug = base || `post-${Date.now()}`;
   let suffix = 0;
   while (true) {
     const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
@@ -77,6 +81,7 @@ export async function createPost(formData: FormData) {
 
   const excerpt = formData.get("excerpt") as string;
   const status = (formData.get("status") as PostStatus) || "draft";
+  if (!VALID_POST_STATUSES.has(status)) return { error: "Invalid status" };
   const tagsRaw = formData.get("tags") as string;
   const content = parseContent(formData.get("content"));
 
@@ -115,6 +120,7 @@ export async function updatePost(id: string, formData: FormData) {
 
   const excerpt = formData.get("excerpt") as string;
   const status = (formData.get("status") as PostStatus) || "draft";
+  if (!VALID_POST_STATUSES.has(status)) return { error: "Invalid status" };
   const tagsRaw = formData.get("tags") as string;
   const content = parseContent(formData.get("content"));
 

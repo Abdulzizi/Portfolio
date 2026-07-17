@@ -6,6 +6,9 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import type { ProjectStatus, Visibility } from "@/generated/prisma/client";
 
+const VALID_PROJECT_STATUSES = new Set(["planning", "in_progress", "done", "archived"]);
+const VALID_VISIBILITIES = new Set(["draft", "published"]);
+
 async function requireAuth() {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
@@ -19,7 +22,7 @@ function slugify(text: string) {
 }
 
 async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  let slug = base || `item-${Date.now()}`;
+  const slug = base || `item-${Date.now()}`;
   let suffix = 0;
   while (true) {
     const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
@@ -40,6 +43,8 @@ export async function createProject(formData: FormData) {
   const year = isNaN(yearRaw) ? new Date().getFullYear() : yearRaw;
   const status = (formData.get("status") as ProjectStatus) || "planning";
   const visibility = (formData.get("visibility") as Visibility) || "draft";
+  if (!VALID_PROJECT_STATUSES.has(status)) return { error: "Invalid status" };
+  if (!VALID_VISIBILITIES.has(visibility)) return { error: "Invalid visibility" };
   const tint = formData.get("tint") as string;
   const stackRaw = formData.get("stack") as string;
   const repoUrl = formData.get("repoUrl") as string;
@@ -88,6 +93,8 @@ export async function updateProject(id: string, formData: FormData) {
   const year = isNaN(yearRaw) ? new Date().getFullYear() : yearRaw;
   const status = formData.get("status") as ProjectStatus;
   const visibility = formData.get("visibility") as Visibility;
+  if (!VALID_PROJECT_STATUSES.has(status)) return { error: "Invalid status" };
+  if (!VALID_VISIBILITIES.has(visibility)) return { error: "Invalid visibility" };
   const tint = formData.get("tint") as string;
   const stackRaw = formData.get("stack") as string;
   const repoUrl = formData.get("repoUrl") as string;

@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 export function CyclingWord({ words }: { words: string[] }) {
   const [index, setIndex] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    if (mq.matches) return;
+    if (reducedMotion) return;
 
     const interval = setInterval(() => {
       setIndex((i) => (i + 1) % words.length);
     }, 2400);
     return () => clearInterval(interval);
-  }, [words.length]);
+  }, [reducedMotion, words.length]);
 
   if (reducedMotion) {
     return <span className="cycle">{words[0]}</span>;

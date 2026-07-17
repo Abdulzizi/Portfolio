@@ -104,6 +104,16 @@ export function TipTapEditor({
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
+    try {
+      const parsed = new URL(url);
+      if (!["http:", "https:", "mailto:"].includes(parsed.protocol)) {
+        window.alert("Only http, https, and mailto links are allowed.");
+        return;
+      }
+    } catch {
+      window.alert("Please enter a valid URL.");
+      return;
+    }
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
 
