@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { HomePage } from "@/components/HomePage";
-import { devDelay } from "@/lib/dev-delay";
 
 export const metadata: Metadata = {
   title: "A. J. Azizi | Solo Developer",
 };
 
 export default async function Page() {
-  await devDelay();
   const [rawSettings, capabilities, projects, posts] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
     prisma.capability.findMany({ orderBy: { order: "asc" } }),

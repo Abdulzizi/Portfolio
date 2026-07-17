@@ -5,12 +5,13 @@ import { requirePageAuth } from "@/lib/auth";
 export default async function AdminDashboard() {
   await requirePageAuth();
 
-  const [projectCount, postCount, draftPosts, draftProjects] = await Promise.all([
-    prisma.project.count(),
-    prisma.post.count(),
-    prisma.post.count({ where: { status: "draft" } }),
-    prisma.project.count({ where: { visibility: "draft" } }),
-  ]);
+  const [projectCount, postCount, draftPosts, draftProjects] =
+    await Promise.all([
+      prisma.project.count(),
+      prisma.post.count(),
+      prisma.post.count({ where: { status: "draft" } }),
+      prisma.project.count({ where: { visibility: "draft" } }),
+    ]);
 
   const stats = [
     { label: "Projects", value: projectCount },
@@ -20,8 +21,9 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div>
+    <div className="admin-dashboard">
       <div
+        className="admin-stat-grid"
         style={{
           fontFamily: "var(--font-geist-mono), monospace",
           fontSize: "11px",
@@ -55,6 +57,7 @@ export default async function AdminDashboard() {
       >
         {stats.map((s) => (
           <div
+            className="admin-stat-card"
             key={s.label}
             style={{
               padding: "24px 20px",
@@ -73,7 +76,13 @@ export default async function AdminDashboard() {
             >
               {s.label}
             </div>
-            <div style={{ fontSize: "36px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+            <div
+              style={{
+                fontSize: "36px",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+              }}
+            >
               {s.value}
             </div>
           </div>
@@ -81,6 +90,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div
+        className="admin-quick-grid"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
@@ -91,6 +101,7 @@ export default async function AdminDashboard() {
         }}
       >
         <Link
+          className="admin-quick-card"
           href="/admin/projects"
           style={{
             padding: "24px 20px",
@@ -112,11 +123,18 @@ export default async function AdminDashboard() {
           >
             Manage
           </div>
-          <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+            }}
+          >
             Projects
           </div>
         </Link>
         <Link
+          className="admin-quick-card"
           href="/admin/posts"
           style={{
             padding: "24px 20px",
@@ -138,7 +156,13 @@ export default async function AdminDashboard() {
           >
             Manage
           </div>
-          <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "-0.03em" }}>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+            }}
+          >
             Posts
           </div>
         </Link>

@@ -3,14 +3,12 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
-import { devDelay } from "@/lib/dev-delay";
 
 export const metadata: Metadata = {
   title: "Work",
 };
 
 export default async function WorkPage() {
-  await devDelay();
   const projects = await prisma.project.findMany({
     where: { visibility: "published" },
     orderBy: { year: "desc" },
