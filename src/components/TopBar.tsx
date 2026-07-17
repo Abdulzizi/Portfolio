@@ -16,7 +16,7 @@ const DARK_EXCUSES = [
   "Fine. Turn your brightness down and pretend.",
 ];
 
-export function TopBar() {
+export function TopBar({ home = false }: { home?: boolean }) {
   const [message, setMessage] = useState<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(null);
   const joke = useRef<HTMLDivElement>(null);
@@ -53,7 +53,7 @@ export function TopBar() {
     <header className="field-nav" id="top">
       <Link href="/" className="field-mark" aria-label="A. J. Azizi, home">A/J</Link>
       <nav aria-label="Primary navigation">
-        <a href="#board">Board</a><Link href="/work">Work</Link><Link href="/blog">Notes</Link><a href="#contact">Contact</a>
+        <Link href={home ? "#board" : "/"}>Board</Link><Link href="/work">Work</Link><Link href="/blog">Notes</Link><Link href={home ? "#contact" : "/#contact"}>Contact</Link>
       </nav>
       <div className="field-nav-tools">
         <div className="dark-joke-wrap" ref={joke}>

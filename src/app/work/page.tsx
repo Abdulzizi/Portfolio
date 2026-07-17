@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { TopBar } from "@/components/TopBar";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Work",
@@ -13,47 +15,38 @@ export default async function WorkPage() {
   });
 
   return (
-    <div className="work-page">
+    <div className="public-page work-page">
+      <TopBar />
       <main className="work-main">
-        <header className="work-header pad">
-          <nav className="work-nav">
-            <Link href="/" className="work-nav-back mono">
-              <span aria-hidden="true">&#8592;</span> Home
-            </Link>
-            <span className="work-nav-sep mono">/</span>
-            <span className="work-nav-current mono">Work</span>
-          </nav>
-
-          <h1 className="work-title">
-            All projects
-          </h1>
-
-          <p className="work-count mono">
+        <header className="public-hero public-hero-work">
+          <p className="public-kicker">Case files / selected and shipped</p>
+          <h1>Work worth<br /><i>keeping.</i></h1>
+          <p className="public-deck">A record of products, experiments, and systems—with the decisions left in.</p>
+          <p className="public-count">
             {projects.length === 0
               ? "No entries"
               : `${String(projects.length).padStart(2, "0")} entries`}
           </p>
         </header>
 
-        <section className="work-list pad">
-          <div className="rows">
+        <section className="public-list work-list" aria-label="Projects">
+          <div className="public-list-head"><span>No.</span><span>Project</span><span>Type</span><span>Year</span></div>
+          <div className="public-rows">
             {projects.length === 0 ? (
-              <div className="row" style={{ cursor: "default" }}>
-                <span className="no mono">/</span>
-                <span className="ttl work-empty-ttl">
+              <div className="public-row public-empty">
+                <span>/</span>
+                <strong>
                   No projects yet, currently building.
-                </span>
-                <span className="yr" />
+                </strong>
+                <span /><span />
               </div>
             ) : (
               projects.map((p, i) => (
-                <Link key={p.id} href={`/work/${p.slug}`} className="row">
-                  <span className="no mono">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="ttl">
-                    {p.name}
-                    {p.kind && <span className="k">{p.kind}</span>}
-                  </span>
-                  <span className="yr">{p.year}</span>
+                <Link key={p.id} href={`/work/${p.slug}`} className="public-row" style={{ "--row-accent": p.tint || "var(--lab-orange)" } as React.CSSProperties}>
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  <strong>{p.name}</strong>
+                  <span>{p.kind || "Project"}</span>
+                  <span>{p.year}</span>
                 </Link>
               ))
             )}
@@ -61,10 +54,7 @@ export default async function WorkPage() {
         </section>
       </main>
 
-      <footer className="site-footer pad">
-        <span>&copy; 2026 Abdul Jawad Azizi</span>
-        <Link href="/" className="footer-home-link">Back to home</Link>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

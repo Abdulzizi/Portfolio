@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { renderContent } from "@/lib/render-content";
+import { TopBar } from "@/components/TopBar";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export async function generateMetadata({
   params,
@@ -51,43 +53,43 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const renderedContent = renderContent(project.content);
 
   return (
-    <div className="cs-page">
+    <div className="public-page detail-page cs-page">
+      <TopBar />
       <main className="cs-main">
-        <header className="cs-header pad">
-          <nav className="cs-nav">
-            <Link href="/work" className="cs-back mono">
+        <header className="detail-hero detail-hero-work">
+          <nav className="detail-crumb">
+            <Link href="/work">
               <span aria-hidden="true">&#8592;</span> Work
             </Link>
-            <span className="cs-nav-sep mono">/</span>
-            <span className="cs-nav-current mono">{project.name}</span>
+            <span>/</span><span>{project.name}</span>
           </nav>
 
-          <h1 className="cs-title">{project.name}</h1>
+          <h1>{project.name}</h1>
 
           {project.kind && (
-            <p className="cs-kind">{project.kind}</p>
+            <p className="detail-deck">{project.kind}</p>
           )}
         </header>
 
-        <section className="cs-meta-bar pad">
-          <dl className="cs-meta-grid">
-            <div className="cs-meta-item">
+        <section className="detail-meta">
+          <dl>
+            <div>
               <dt>Year</dt>
               <dd>{project.year}</dd>
             </div>
 
             {project.stack.length > 0 && (
-              <div className="cs-meta-item cs-meta-stack">
+              <div>
                 <dt>Stack</dt>
                 <dd>{project.stack.join(" · ")}</dd>
               </div>
             )}
 
             {project.liveUrl && (
-              <div className="cs-meta-item">
+              <div>
                 <dt>Live</dt>
                 <dd>
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="cs-link">
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                     Visit site
                   </a>
                 </dd>
@@ -95,10 +97,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             )}
 
             {project.repoUrl && (
-              <div className="cs-meta-item">
+              <div>
                 <dt>Code</dt>
                 <dd>
-                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="cs-link">
+                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
                     Repository
                   </a>
                 </dd>
@@ -107,7 +109,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </dl>
         </section>
 
-        <section className="cs-body pad">
+        <section className="detail-body">
           {renderedContent ? (
             <div className="cs-content bp-prose" dangerouslySetInnerHTML={{ __html: renderedContent }} />
           ) : project.status !== "done" ? (
@@ -121,14 +123,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
       </main>
 
-      <footer className="site-footer cs-footer pad">
-        <Link href="/work" className="mono" style={{ color: "var(--muted)" }}>
-          &#8592; All work
-        </Link>
-        <Link href="/" className="mono" style={{ color: "var(--muted)" }}>
-          Home
-        </Link>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

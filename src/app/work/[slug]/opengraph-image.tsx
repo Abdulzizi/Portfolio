@@ -31,7 +31,7 @@ export default async function Image({
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "flex-start",
-            backgroundColor: "#141311",
+            backgroundColor: "#d8ff35",
             padding: "100px",
             fontFamily: "sans-serif",
           }}
@@ -41,7 +41,7 @@ export default async function Image({
               display: "flex",
               fontSize: 80,
               fontWeight: 700,
-              color: "#E8E4DC",
+              color: "#11110f",
             }}
           >
             Project not found
@@ -62,7 +62,7 @@ export default async function Image({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "flex-start",
-          backgroundColor: "#141311",
+          backgroundColor: "#b8c0ff",
           padding: "100px",
           fontFamily: "sans-serif",
         }}
@@ -73,7 +73,7 @@ export default async function Image({
             fontSize: 26,
             letterSpacing: 4,
             textTransform: "uppercase",
-            color: "#6C63FF",
+            color: "#11110f",
             fontFamily: "monospace",
             marginBottom: 28,
           }}
@@ -85,7 +85,7 @@ export default async function Image({
             display: "flex",
             fontSize: 96,
             fontWeight: 700,
-            color: "#E8E4DC",
+            color: "#11110f",
             lineHeight: 1.05,
           }}
         >
@@ -96,7 +96,7 @@ export default async function Image({
             style={{
               display: "flex",
               fontSize: 34,
-              color: "#6C695D",
+              color: "#ff5938",
               marginTop: 28,
             }}
           >
@@ -119,8 +119,8 @@ export default async function Image({
                   display: "flex",
                   fontFamily: "monospace",
                   fontSize: 22,
-                  color: "#E8E4DC",
-                  border: "1px solid #6C695D",
+                  color: "#11110f",
+                  border: "2px solid #11110f",
                   padding: "8px 16px",
                 }}
               >

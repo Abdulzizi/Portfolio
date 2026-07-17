@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { renderContent } from "@/lib/render-content";
+import { TopBar } from "@/components/TopBar";
+import { PublicFooter } from "@/components/PublicFooter";
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -47,38 +49,38 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const renderedContent = renderContent(post.content);
 
   return (
-    <div className="bp-page">
+    <div className="public-page detail-page bp-page">
+      <TopBar />
       <main className="bp-main">
-        <header className="bp-header pad">
-          <nav className="bp-nav">
-            <Link href="/blog" className="bp-back mono">
+        <header className="detail-hero detail-hero-note">
+          <nav className="detail-crumb">
+            <Link href="/blog">
               <span aria-hidden="true">&#8592;</span> Blog
             </Link>
-            <span className="bp-nav-sep mono">/</span>
-            <span className="bp-nav-current mono">{post.title}</span>
+            <span>/</span><span>{post.title}</span>
           </nav>
 
-          <h1 className="bp-title">{post.title}</h1>
+          <h1>{post.title}</h1>
 
-          <div className="bp-meta">
+          <div className="detail-byline">
             {post.publishedAt && (
-              <span className="bp-meta-item mono">{formatDate(post.publishedAt)}</span>
+              <span>{formatDate(post.publishedAt)}</span>
             )}
             {post.readingTime && (
-              <span className="bp-meta-item mono">{post.readingTime} min read</span>
+              <span>{post.readingTime} min read</span>
             )}
           </div>
 
           {post.tags.length > 0 && (
-            <div className="bp-tags">
+            <div className="detail-tags">
               {post.tags.map(({ tag }) => (
-                <span key={tag.id} className="bp-tag mono">{tag.name}</span>
+                <span key={tag.id}>{tag.name}</span>
               ))}
             </div>
           )}
         </header>
 
-        <section className="bp-body pad">
+        <section className="detail-body">
           {renderedContent ? (
             <div className="bp-prose" dangerouslySetInnerHTML={{ __html: renderedContent }} />
           ) : (
@@ -90,14 +92,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </section>
       </main>
 
-      <footer className="site-footer bp-footer pad">
-        <Link href="/blog" className="mono" style={{ color: "var(--muted)" }}>
-          &#8592; All posts
-        </Link>
-        <Link href="/" className="mono" style={{ color: "var(--muted)" }}>
-          Home
-        </Link>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

@@ -18,7 +18,7 @@ export default async function Image() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "flex-start",
-          backgroundColor: "#141311",
+          backgroundColor: "#d8ff35",
           padding: "100px",
           fontFamily: "sans-serif",
         }}
@@ -29,19 +29,19 @@ export default async function Image() {
             fontSize: 26,
             letterSpacing: 4,
             textTransform: "uppercase",
-            color: "#6C63FF",
+            color: "#11110f",
             fontFamily: "monospace",
             marginBottom: 28,
           }}
         >
-          Portfolio
+          AJ / Product engineer / Jakarta
         </div>
         <div
           style={{
             display: "flex",
             fontSize: 120,
             fontWeight: 700,
-            color: "#E8E4DC",
+            color: "#11110f",
             lineHeight: 1.05,
           }}
         >
@@ -51,11 +51,11 @@ export default async function Image() {
           style={{
             display: "flex",
             fontSize: 36,
-            color: "#6C695D",
+            color: "#ff5938",
             marginTop: 32,
           }}
         >
-          Solo Developer
+          I make software make sense.
         </div>
       </div>
     ),
