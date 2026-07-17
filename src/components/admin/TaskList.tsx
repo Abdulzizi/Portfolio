@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 import { createTask, deleteTask, toggleTaskStatus } from "@/app/actions/tasks";
 
 const statusLabel: Record<string, string> = { todo: "To do", doing: "Doing", done: "Done" };
@@ -33,6 +33,8 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
   }
 
   const [, action, pending] = useActionState(handleCreate, {});
+  const [toggling, startToggle] = useTransition();
+  const [deleting, startDelete] = useTransition();
 
   return (
     <div style={{ marginTop: "48px" }}>
@@ -96,7 +98,8 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
               }}
             >
               <button
-                onClick={() => toggleTaskStatus(t.id, projectId)}
+                onClick={() => startToggle(async () => { await toggleTaskStatus(t.id, projectId); })}
+                disabled={toggling}
                 style={{
                   width: "18px",
                   height: "18px",
@@ -104,6 +107,7 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
                   background: t.status === "done" ? "var(--accent)" : "transparent",
                   cursor: "pointer",
                   flexShrink: 0,
+                  opacity: toggling ? 0.5 : undefined,
                 }}
               />
               <span style={{ flex: 1, fontSize: "14px" }}>{t.title}</span>
@@ -113,7 +117,7 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
                   fontSize: "10px",
                   letterSpacing: "0.06em",
                   textTransform: "uppercase",
-                  color: statusLabel[t.status] ? "var(--muted)" : "var(--muted)",
+                  color: "var(--muted)",
                 }}
               >
                 {statusLabel[t.status]}
@@ -130,7 +134,12 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
                 {t.priority}
               </span>
               <button
-                onClick={() => deleteTask(t.id, projectId)}
+                onClick={() => {
+                  if (window.confirm("Delete this task?")) {
+                    startDelete(async () => { await deleteTask(t.id, projectId); });
+                  }
+                }}
+                disabled={deleting}
                 style={{
                   padding: "4px 8px",
                   fontSize: "10px",

@@ -1,7 +1,10 @@
 import { prisma } from "@/lib/db";
 import { SettingsForm } from "@/components/admin/SettingsForm";
+import { requirePageAuth } from "@/lib/auth";
 
 export default async function SettingsPage() {
+  await requirePageAuth();
+
   const settings = await prisma.siteSettings.findUnique({
     where: { id: "singleton" },
   });

@@ -15,8 +15,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--paper)" }}>
+    <div className="admin-shell" style={{ display: "flex", minHeight: "100vh", background: "var(--paper)" }}>
       <aside
+        className="admin-sidebar"
         style={{
           width: "220px",
           borderRight: "1px solid var(--line)",
@@ -27,8 +28,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           flexShrink: 0,
         }}
       >
-        <div>
+        <div className="admin-sidebar-top">
           <div
+            className="admin-brand"
             style={{
               padding: "0 20px 24px",
               fontWeight: 700,
@@ -38,13 +40,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           >
             A. J. Azizi
           </div>
-          <nav style={{ display: "flex", flexDirection: "column" }}>
+          <nav className="admin-nav" style={{ display: "flex", flexDirection: "column" }}>
             {NAV.map((item) => {
-              const active = pathname === item.href;
+              const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  className="admin-nav-link"
                   style={{
                     padding: "10px 20px",
                     fontFamily: "var(--font-geist-mono), monospace",
@@ -64,9 +67,33 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
         </div>
-        <form action={logout} style={{ padding: "0 20px" }}>
+        <div className="admin-sidebar-bottom" style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block",
+              textAlign: "center",
+              padding: "10px",
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              background: "transparent",
+              border: "1px solid var(--line)",
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "border-color 0.15s, color 0.15s",
+            }}
+          >
+            View site &rarr;
+          </a>
+        <form action={logout} className="admin-signout-form">
           <button
             type="submit"
+            className="admin-signout-btn"
             style={{
               width: "100%",
               padding: "10px",
@@ -84,8 +111,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             Sign out
           </button>
         </form>
+        </div>
       </aside>
-      <main style={{ flex: 1, padding: "28px 36px", overflowY: "auto" }}>
+      <main className="admin-content" style={{ flex: 1, padding: "28px 36px", overflowY: "auto" }}>
         {children}
       </main>
     </div>

@@ -14,12 +14,13 @@ export function TopBar({
       <div className="name">A. J. Azizi</div>
       <div className="right">
         <div className="status">
-          <span className="dot" />
+          <span className="dot" aria-hidden="true" />
           {availability}
         </div>
         <button
           className={`bar-btn ${theme === "dark" ? "active" : ""}`}
           onClick={toggle}
+          aria-label="Toggle theme"
         >
           <span className="sw">
             <i />

@@ -9,7 +9,7 @@ export function Marquee({ items }: { items: string[] }) {
   ]);
 
   return (
-    <div className="marq" data-x="marquee">
+    <div className="marq" data-x="marquee" aria-label={items.join(", ")}>
       <div className="track">
         {track}
         {track}

@@ -2,8 +2,11 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { TaskList } from "@/components/admin/TaskList";
+import { requirePageAuth } from "@/lib/auth";
 
 export default async function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePageAuth();
+
   const { id } = await params;
 
   const project = await prisma.project.findUnique({
