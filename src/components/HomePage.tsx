@@ -20,7 +20,7 @@ export function HomePage({ settings, capabilities, projects, posts }: { settings
 
   return (
     <div className="aj-board">
-      <TopBar />
+      <TopBar home />
       <main>
         <header className="board-masthead">
           <div className="board-intro">

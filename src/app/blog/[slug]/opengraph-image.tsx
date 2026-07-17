@@ -39,7 +39,7 @@ export default async function Image({
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "flex-start",
-            backgroundColor: "#141311",
+            backgroundColor: "#ff5938",
             padding: "100px",
             fontFamily: "sans-serif",
           }}
@@ -49,7 +49,7 @@ export default async function Image({
               display: "flex",
               fontSize: 80,
               fontWeight: 700,
-              color: "#E8E4DC",
+              color: "#11110f",
             }}
           >
             Post not found
@@ -70,7 +70,7 @@ export default async function Image({
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "flex-start",
-          backgroundColor: "#141311",
+          backgroundColor: "#ff5938",
           padding: "100px",
           fontFamily: "sans-serif",
         }}
@@ -81,7 +81,7 @@ export default async function Image({
               display: "flex",
               fontSize: 24,
               letterSpacing: 2,
-              color: "#6C63FF",
+              color: "#11110f",
               fontFamily: "monospace",
               marginBottom: 28,
             }}
@@ -94,7 +94,7 @@ export default async function Image({
             display: "flex",
             fontSize: 84,
             fontWeight: 700,
-            color: "#E8E4DC",
+            color: "#11110f",
             lineHeight: 1.1,
           }}
         >
@@ -105,7 +105,7 @@ export default async function Image({
             style={{
               display: "flex",
               fontSize: 32,
-              color: "#6C695D",
+              color: "#f1ecdf",
               marginTop: 32,
             }}
           >

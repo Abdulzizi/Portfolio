@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { TopBar } from "@/components/TopBar";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -22,56 +24,48 @@ export default async function BlogPage() {
   });
 
   return (
-    <div className="blog-page">
+    <div className="public-page blog-page">
+      <TopBar />
       <main className="blog-main">
-        <header className="blog-header pad">
-          <nav className="blog-nav">
-            <Link href="/" className="blog-nav-back mono">
-              <span aria-hidden="true">&#8592;</span> Home
-            </Link>
-            <span className="blog-nav-sep mono">/</span>
-            <span className="blog-nav-current mono">Blog</span>
-          </nav>
-
-          <h1 className="blog-title">
-            Writing
-          </h1>
-
-          <p className="blog-count mono">
+        <header className="public-hero public-hero-notes">
+          <p className="public-kicker">Notes / thinking in public</p>
+          <h1>Loose thoughts,<br /><i>held together.</i></h1>
+          <p className="public-deck">Things I learned while making software behave.</p>
+          <p className="public-count">
             {posts.length === 0
               ? "No entries"
               : `${String(posts.length).padStart(2, "0")} entries`}
           </p>
         </header>
 
-        <section className="blog-list pad">
+        <section className="public-note-list blog-list" aria-label="Notes">
           {posts.length === 0 ? (
-            <div className="blog-empty">
+            <div className="public-note-empty">
               <span className="blog-empty-ttl">No posts yet, still writing.</span>
             </div>
           ) : (
-            <div className="blog-items">
+            <div className="public-note-items">
               {posts.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`} className="blog-item">
-                  <div className="blog-item-top">
-                    <h2 className="blog-item-title">{post.title}</h2>
+                <Link key={post.id} href={`/blog/${post.slug}`} className="public-note">
+                  <div className="public-note-top">
+                    <h2>{post.title}</h2>
                     {post.readingTime && (
-                      <span className="blog-item-time mono">{post.readingTime} min read</span>
+                      <span>{post.readingTime} min read</span>
                     )}
                   </div>
 
                   {post.excerpt && (
-                    <p className="blog-item-excerpt">{post.excerpt}</p>
+                    <p>{post.excerpt}</p>
                   )}
 
-                  <div className="blog-item-meta">
+                  <div className="public-note-meta">
                     {post.publishedAt && (
-                      <span className="blog-item-date mono">{formatDate(post.publishedAt)}</span>
+                      <span>{formatDate(post.publishedAt)}</span>
                     )}
                     {post.tags.length > 0 && (
-                      <span className="blog-item-tags">
+                      <span className="public-note-tags">
                         {post.tags.map(({ tag }) => (
-                          <span key={tag.id} className="blog-tag mono">{tag.name}</span>
+                          <span key={tag.id}>{tag.name}</span>
                         ))}
                       </span>
                     )}
@@ -83,10 +77,7 @@ export default async function BlogPage() {
         </section>
       </main>
 
-      <footer className="site-footer pad">
-        <span>&copy; 2026 Abdul Jawad Azizi</span>
-        <Link href="/" className="footer-home-link">Back to home</Link>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }
