@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
+import { devDelay } from "@/lib/dev-delay";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -17,6 +18,7 @@ function formatDate(date: Date) {
 }
 
 export default async function BlogPage() {
+  await devDelay();
   const posts = await prisma.post.findMany({
     where: { status: "published" },
     orderBy: { publishedAt: "desc" },

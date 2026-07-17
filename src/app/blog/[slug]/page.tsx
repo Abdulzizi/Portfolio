@@ -5,6 +5,7 @@ import Link from "next/link";
 import { renderContent } from "@/lib/render-content";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
+import { devDelay } from "@/lib/dev-delay";
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -37,6 +38,7 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  await devDelay();
   const { slug } = await params;
 
   const post = await prisma.post.findUnique({
