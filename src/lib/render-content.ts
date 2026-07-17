@@ -18,13 +18,24 @@ export function renderContent(content: unknown): string | null {
     ]);
     if (!html.trim()) return null;
     return sanitizeHtml(html, {
-      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "h3"]),
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        "img",
+        "h1",
+        "h2",
+        "h3",
+      ]),
       allowedAttributes: {
         ...sanitizeHtml.defaults.allowedAttributes,
         img: ["src", "alt", "title"],
         a: ["href", "target", "rel"],
       },
       allowedSchemes: ["http", "https", "mailto"],
+      transformTags: {
+        img: (_tagName, attribs) => ({
+          tagName: "img",
+          attribs: { ...attribs, alt: attribs.alt?.trim() ?? "" },
+        }),
+      },
     });
   } catch {
     return null;

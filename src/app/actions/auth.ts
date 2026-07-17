@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { verifyCredentials, createSession, deleteSession } from "@/lib/auth";
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
+// ponytail: per-process limit; move to Redis only when auth runs on multiple instances.
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
 
@@ -19,7 +20,10 @@ function checkRateLimit(key: string): boolean {
   return true;
 }
 
-export async function login(_prev: { error?: string } | undefined, formData: FormData) {
+export async function login(
+  _prev: { error?: string } | undefined,
+  formData: FormData,
+) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 

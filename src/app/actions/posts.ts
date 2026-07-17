@@ -3,15 +3,11 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import type { PostStatus } from "@/generated/prisma/client";
+import { hasImageWithoutAlt } from "@/lib/content-validation";
 
 const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
-
-async function requireAuth() {
-  const session = await getSession();
-  if (!session) throw new Error("Unauthorized");
-}
 
 function slugify(text: string) {
   return text
@@ -21,10 +17,12 @@ function slugify(text: string) {
 }
 
 function parseContent(contentRaw: FormDataEntryValue | null) {
-  if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim()) return undefined;
+  if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim())
+    return undefined;
   try {
     const parsed = JSON.parse(contentRaw);
-    if (typeof parsed !== "object" || parsed === null || !("type" in parsed)) return undefined;
+    if (typeof parsed !== "object" || parsed === null || !("type" in parsed))
+      return undefined;
     return parsed;
   } catch {
     return undefined;
@@ -36,7 +34,9 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
   let suffix = 0;
   while (true) {
     const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
-    const existing = await prisma.post.findUnique({ where: { slug: candidate } });
+    const existing = await prisma.post.findUnique({
+      where: { slug: candidate },
+    });
     if (!existing || existing.id === excludeId) return candidate;
     suffix++;
   }
@@ -44,7 +44,10 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
 
 async function resolveTagIds(tagsRaw: string) {
   const names = tagsRaw
-    ? tagsRaw.split(",").map((t) => t.trim()).filter(Boolean)
+    ? tagsRaw
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
     : [];
 
   const tagIds: string[] = [];
@@ -84,6 +87,8 @@ export async function createPost(formData: FormData) {
   if (!VALID_POST_STATUSES.has(status)) return { error: "Invalid status" };
   const tagsRaw = formData.get("tags") as string;
   const content = parseContent(formData.get("content"));
+  if (hasImageWithoutAlt(content))
+    return { error: "Every image needs alternative text" };
 
   const slug = await uniqueSlug(slugify(title));
   const tagIds = await resolveTagIds(tagsRaw);
@@ -123,6 +128,8 @@ export async function updatePost(id: string, formData: FormData) {
   if (!VALID_POST_STATUSES.has(status)) return { error: "Invalid status" };
   const tagsRaw = formData.get("tags") as string;
   const content = parseContent(formData.get("content"));
+  if (hasImageWithoutAlt(content))
+    return { error: "Every image needs alternative text" };
 
   const existing = await prisma.post.findUnique({ where: { id } });
   const slug = await uniqueSlug(slugify(title), id);
@@ -139,7 +146,7 @@ export async function updatePost(id: string, formData: FormData) {
         content: content ?? undefined,
         publishedAt:
           status === "published"
-            ? existing?.publishedAt ?? new Date()
+            ? (existing?.publishedAt ?? new Date())
             : status === "draft"
               ? null
               : existing?.publishedAt,
@@ -167,35 +174,5 @@ export async function deletePost(id: string) {
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to delete post." };
-  }
-}
-
-export async function publishPost(id: string) {
-  await requireAuth();
-  try {
-    const post = await prisma.post.update({
-      where: { id },
-      data: { status: "published", publishedAt: new Date() },
-    });
-    revalidateAll(post.slug);
-    revalidatePath(`/admin/posts/${id}`);
-  } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
-    return { error: "Failed to publish post." };
-  }
-}
-
-export async function unpublishPost(id: string) {
-  await requireAuth();
-  try {
-    const post = await prisma.post.update({
-      where: { id },
-      data: { status: "draft" },
-    });
-    revalidateAll(post.slug);
-    revalidatePath(`/admin/posts/${id}`);
-  } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
-    return { error: "Failed to unpublish post." };
   }
 }

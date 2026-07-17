@@ -9,7 +9,6 @@ export default async function SettingsPage() {
     where: { id: "singleton" },
   });
 
-  const kickerItems = (settings?.kickerItems as string[]) ?? [];
   const socials = (settings?.socialLinks as Record<string, string>) ?? {};
 
   return (
@@ -37,10 +36,6 @@ export default async function SettingsPage() {
         Settings
       </h1>
       <SettingsForm
-        kickerItems={kickerItems}
-        cycleWords={settings?.cycleWords ?? []}
-        marqueeItems={settings?.marqueeItems ?? []}
-        availabilityText={settings?.availabilityText ?? ""}
         socialEmail={socials.email ?? ""}
         socialGithub={socials.github ?? ""}
         socialLinkedin={socials.linkedin ?? ""}

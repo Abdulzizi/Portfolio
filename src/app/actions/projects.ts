@@ -3,16 +3,20 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import type { ProjectStatus, Visibility } from "@/generated/prisma/client";
+import {
+  normalizeArtVariant,
+  normalizeProjectTint,
+} from "@/lib/project-art-variant";
 
-const VALID_PROJECT_STATUSES = new Set(["planning", "in_progress", "done", "archived"]);
+const VALID_PROJECT_STATUSES = new Set([
+  "planning",
+  "in_progress",
+  "done",
+  "archived",
+]);
 const VALID_VISIBILITIES = new Set(["draft", "published"]);
-
-async function requireAuth() {
-  const session = await getSession();
-  if (!session) throw new Error("Unauthorized");
-}
 
 function slugify(text: string) {
   return text
@@ -26,7 +30,9 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
   let suffix = 0;
   while (true) {
     const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
-    const existing = await prisma.project.findUnique({ where: { slug: candidate } });
+    const existing = await prisma.project.findUnique({
+      where: { slug: candidate },
+    });
     if (!existing || existing.id === excludeId) return candidate;
     suffix++;
   }
@@ -44,8 +50,15 @@ export async function createProject(formData: FormData) {
   const status = (formData.get("status") as ProjectStatus) || "planning";
   const visibility = (formData.get("visibility") as Visibility) || "draft";
   if (!VALID_PROJECT_STATUSES.has(status)) return { error: "Invalid status" };
-  if (!VALID_VISIBILITIES.has(visibility)) return { error: "Invalid visibility" };
-  const tint = formData.get("tint") as string;
+  if (!VALID_VISIBILITIES.has(visibility))
+    return { error: "Invalid visibility" };
+  const tintRaw = formData.get("tint");
+  const tint = normalizeProjectTint(tintRaw);
+  if (!tint) return { error: "Invalid tint color" };
+  const artVariantRaw = formData.get("artVariant");
+  const artVariant = normalizeArtVariant(artVariantRaw);
+  if (artVariantRaw && artVariant === null)
+    return { error: "Invalid artwork composition" };
   const stackRaw = formData.get("stack") as string;
   const repoUrl = formData.get("repoUrl") as string;
   const liveUrl = formData.get("liveUrl") as string;
@@ -63,8 +76,14 @@ export async function createProject(formData: FormData) {
         year,
         status,
         visibility,
-        tint: tint || null,
-        stack: stackRaw ? stackRaw.split(",").map((s) => s.trim()).filter(Boolean) : [],
+        tint,
+        artVariant,
+        stack: stackRaw
+          ? stackRaw
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
         repoUrl: repoUrl || null,
         liveUrl: liveUrl || null,
         privateNotes: privateNotes || null,
@@ -94,8 +113,15 @@ export async function updateProject(id: string, formData: FormData) {
   const status = formData.get("status") as ProjectStatus;
   const visibility = formData.get("visibility") as Visibility;
   if (!VALID_PROJECT_STATUSES.has(status)) return { error: "Invalid status" };
-  if (!VALID_VISIBILITIES.has(visibility)) return { error: "Invalid visibility" };
-  const tint = formData.get("tint") as string;
+  if (!VALID_VISIBILITIES.has(visibility))
+    return { error: "Invalid visibility" };
+  const tintRaw = formData.get("tint");
+  const tint = normalizeProjectTint(tintRaw);
+  if (!tint) return { error: "Invalid tint color" };
+  const artVariantRaw = formData.get("artVariant");
+  const artVariant = normalizeArtVariant(artVariantRaw);
+  if (artVariantRaw && artVariant === null)
+    return { error: "Invalid artwork composition" };
   const stackRaw = formData.get("stack") as string;
   const repoUrl = formData.get("repoUrl") as string;
   const liveUrl = formData.get("liveUrl") as string;
@@ -114,8 +140,14 @@ export async function updateProject(id: string, formData: FormData) {
         year,
         status,
         visibility,
-        tint: tint || null,
-        stack: stackRaw ? stackRaw.split(",").map((s) => s.trim()).filter(Boolean) : [],
+        tint,
+        artVariant,
+        stack: stackRaw
+          ? stackRaw
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
         repoUrl: repoUrl || null,
         liveUrl: liveUrl || null,
         privateNotes: privateNotes || null,

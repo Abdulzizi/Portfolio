@@ -118,6 +118,27 @@ export function TipTapEditor({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
 
+  const addImage = useCallback(() => {
+    if (!editor) return;
+    const src = window.prompt("Image URL", "https://");
+    if (!src) return;
+    try {
+      const parsed = new URL(src);
+      if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
+    } catch {
+      window.alert("Please enter a valid http or https image URL.");
+      return;
+    }
+    const alt = window.prompt(
+      "Describe the image for people who cannot see it",
+    );
+    if (!alt?.trim()) {
+      window.alert("Alternative text is required.");
+      return;
+    }
+    editor.chain().focus().setImage({ src, alt: alt.trim() }).run();
+  }, [editor]);
+
   if (!editor) {
     return (
       <div
@@ -164,13 +185,17 @@ export function TipTapEditor({
           label="H2"
           title="Heading 2"
           active={editor.isActive("heading", { level: 2 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
         />
         <ToolbarButton
           label="H3"
           title="Heading 3"
           active={editor.isActive("heading", { level: 3 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
         />
         <ToolbarButton
           label="List"
@@ -191,6 +216,11 @@ export function TipTapEditor({
           onClick={setLink}
         />
         <ToolbarButton
+          label="Image"
+          title="Add image with alternative text"
+          onClick={addImage}
+        />
+        <ToolbarButton
           label="Code"
           title="Code block"
           active={editor.isActive("codeBlock")}
@@ -207,7 +237,12 @@ export function TipTapEditor({
         <EditorContent editor={editor} />
       </div>
 
-      <input type="hidden" name={name} value={json ? JSON.stringify(json) : ""} readOnly />
+      <input
+        type="hidden"
+        name={name}
+        value={json ? JSON.stringify(json) : ""}
+        readOnly
+      />
     </div>
   );
 }
