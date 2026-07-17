@@ -42,10 +42,11 @@ export function ProjectForm({ project }: { project?: Project }) {
 
   return (
     <form
+      className="admin-form"
       action={action}
       style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "560px" }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+      <div className="admin-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
         <div style={{ gridColumn: "1 / -1" }}>
           <label style={labelStyle}>Name</label>
           <input name="name" required defaultValue={project?.name ?? ""} style={inputStyle} />
@@ -86,7 +87,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         <input name="tint" defaultValue={project?.tint ?? "#2B2BF0"} placeholder="#2B2BF0" style={{ ...inputStyle, maxWidth: "140px" }} />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+      <div className="admin-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
         <div>
           <label style={labelStyle}>Repo URL</label>
           <input name="repoUrl" type="url" defaultValue={project?.repoUrl ?? ""} style={inputStyle} />
@@ -113,7 +114,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         <label htmlFor="isFeatured" style={{ ...labelStyle, marginBottom: 0 }}>Featured on homepage</label>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", borderTop: "1px solid var(--line)", paddingTop: "24px" }}>
+      <div className="admin-form-actions" style={{ display: "flex", alignItems: "center", gap: "16px", borderTop: "1px solid var(--line)", paddingTop: "24px" }}>
         <button
           type="submit"
           disabled={pending}
@@ -145,6 +146,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         )}
         {isEdit && (
           <button
+            className="admin-delete-btn"
             type="button"
             onClick={() => {
               if (window.confirm("Delete this project and all its tasks? This cannot be undone.")) {
