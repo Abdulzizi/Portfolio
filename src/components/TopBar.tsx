@@ -53,7 +53,7 @@ export function TopBar() {
     <header className="field-nav" id="top">
       <Link href="/" className="field-mark" aria-label="A. J. Azizi, home">A/J</Link>
       <nav aria-label="Primary navigation">
-        <a href="#work">Work</a><a href="#practice">Practice</a><a href="#journal">Notes</a><a href="#contact">Contact</a>
+        <a href="#board">Board</a><Link href="/work">Work</Link><Link href="/blog">Notes</Link><a href="#contact">Contact</a>
       </nav>
       <div className="field-nav-tools">
         <div className="dark-joke-wrap" ref={joke}>
