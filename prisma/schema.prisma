@@ -7,16 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  name         String
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  @@map("users")
-}
-
 model Project {
   id           String    @id @default(cuid())
   slug         String    @unique
@@ -25,18 +15,14 @@ model Project {
   year         Int
   status       ProjectStatus @default(planning)
   visibility   Visibility    @default(draft)
-  client       String?
   tint         String?
+  artVariant   Int?      @map("art_variant")
   stack        String[]
-  coverImage   String?   @map("cover_image")
   content      Json?
   isFeatured   Boolean   @default(false) @map("is_featured")
-  order        Int       @default(0)
   repoUrl      String?   @map("repo_url")
   liveUrl      String?   @map("live_url")
   privateNotes String?   @map("private_notes")
-  startedAt    DateTime? @map("started_at")
-  completedAt  DateTime? @map("completed_at")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
@@ -53,7 +39,6 @@ model Task {
   priority  TaskPriority @default(medium)
   dueDate   DateTime?    @map("due_date")
   notes     String?
-  order     Int          @default(0)
   createdAt DateTime     @default(now()) @map("created_at")
   updatedAt DateTime     @updatedAt @map("updated_at")
 
@@ -68,7 +53,6 @@ model Post {
   title       String
   excerpt     String?
   content     Json?
-  coverImage  String?    @map("cover_image")
   status      PostStatus @default(draft)
   publishedAt DateTime?  @map("published_at")
   readingTime Int?       @map("reading_time")
@@ -111,12 +95,8 @@ model Capability {
 }
 
 model SiteSettings {
-  id               String   @id @default("singleton")
-  kickerItems      Json?    @map("kicker_items")
-  cycleWords       String[] @map("cycle_words")
-  availabilityText String?  @map("availability_text")
-  marqueeItems     String[] @map("marquee_items")
-  socialLinks      Json?    @map("social_links")
+  id          String @id @default("singleton")
+  socialLinks Json?   @map("social_links")
 
   @@map("site_settings")
 }

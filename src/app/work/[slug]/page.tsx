@@ -28,7 +28,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
 
   const project = await prisma.project.findUnique({
@@ -61,14 +65,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <Link href="/work">
               <span aria-hidden="true">&#8592;</span> Work
             </Link>
-            <span>/</span><span>{project.name}</span>
+            <span>/</span>
+            <span>{project.name}</span>
           </nav>
 
           <h1>{project.name}</h1>
 
-          {project.kind && (
-            <p className="detail-deck">{project.kind}</p>
-          )}
+          {project.kind && <p className="detail-deck">{project.kind}</p>}
         </header>
 
         <section className="detail-meta">
@@ -89,8 +92,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div>
                 <dt>Live</dt>
                 <dd>
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                    Visit site
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit site <span aria-hidden="true">↗</span>
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
                 </dd>
               </div>
@@ -100,8 +108,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div>
                 <dt>Code</dt>
                 <dd>
-                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                    Repository
+                  <a
+                    href={project.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Repository <span aria-hidden="true">↗</span>
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
                 </dd>
               </div>
@@ -111,15 +124,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
         <section className="detail-body">
           {renderedContent ? (
-            <div className="cs-content bp-prose" dangerouslySetInnerHTML={{ __html: renderedContent }} />
+            <div
+              className="cs-content bp-prose"
+              dangerouslySetInnerHTML={{ __html: renderedContent }}
+            />
           ) : project.status !== "done" ? (
             <div className="cs-placeholder">
-              <span className="cs-placeholder-label mono">— Case study in progress</span>
+              <span className="cs-placeholder-label mono">
+                — Case study in progress
+              </span>
               <p className="cs-placeholder-note">
-                The full write-up for this project is being drafted. Check back soon.
+                The full write-up for this project is being drafted. Check back
+                soon.
               </p>
             </div>
-          ) : <div className="cs-placeholder"><span className="cs-placeholder-label mono">— Field record</span><p className="cs-placeholder-note">The project shipped. The decision record is still being written.</p></div>}
+          ) : (
+            <div className="cs-placeholder">
+              <span className="cs-placeholder-label mono">— Field record</span>
+              <p className="cs-placeholder-note">
+                The project shipped. The decision record is still being written.
+              </p>
+            </div>
+          )}
         </section>
       </main>
 

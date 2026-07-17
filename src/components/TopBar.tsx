@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const DARK_EXCUSES = [
@@ -17,11 +18,17 @@ const DARK_EXCUSES = [
 ];
 
 export function TopBar({ home = false }: { home?: boolean }) {
+  const pathname = usePathname();
   const [message, setMessage] = useState<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(null);
   const joke = useRef<HTMLDivElement>(null);
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (message === null) return;
@@ -51,15 +58,46 @@ export function TopBar({ home = false }: { home?: boolean }) {
 
   return (
     <header className="field-nav" id="top">
-      <Link href="/" className="field-mark" aria-label="A. J. Azizi, home">A/J</Link>
+      <Link href="/" className="field-mark" aria-label="A. J. Azizi, home">
+        A/J
+      </Link>
       <nav aria-label="Primary navigation">
-        <Link href={home ? "#board" : "/"}>Board</Link><Link href="/work">Work</Link><Link href="/blog">Notes</Link><Link href={home ? "#contact" : "/#contact"}>Contact</Link>
+        <Link
+          href={home ? "#board" : "/"}
+          aria-current={pathname === "/" ? "page" : undefined}
+        >
+          Board
+        </Link>
+        <Link
+          href="/work"
+          aria-current={pathname.startsWith("/work") ? "page" : undefined}
+        >
+          Work
+        </Link>
+        <Link
+          href="/blog"
+          aria-current={pathname.startsWith("/blog") ? "page" : undefined}
+        >
+          Notes
+        </Link>
+        <Link href={home ? "#contact" : "/#contact"}>Contact</Link>
       </nav>
       <div className="field-nav-tools">
         <div className="dark-joke-wrap" ref={joke}>
-          <button onClick={rejectDarkMode} aria-expanded={message !== null} aria-controls="dark-joke">Dark</button>
+          <button
+            onClick={rejectDarkMode}
+            aria-expanded={message !== null}
+            aria-controls="dark-joke"
+          >
+            Dark
+          </button>
           {message !== null && (
-            <div className="dark-joke" id="dark-joke" role="status" aria-live="polite">
+            <div
+              className="dark-joke"
+              id="dark-joke"
+              role="status"
+              aria-live="polite"
+            >
               {DARK_EXCUSES[message]}
             </div>
           )}

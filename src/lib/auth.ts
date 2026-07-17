@@ -10,7 +10,9 @@ if (!jwtSecret && process.env.NODE_ENV === "production") {
 const secret = new TextEncoder().encode(jwtSecret || "dev-secret-change-me");
 const COOKIE_NAME = "admin_session";
 
-const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || "$2b$10$y4x0CG/dokTTheJpVMY4EuOTaSnm2RTQC7uOCZLUfb3oqDm2hk4dC";
+const ADMIN_HASH =
+  process.env.ADMIN_PASSWORD_HASH ||
+  "$2b$10$y4x0CG/dokTTheJpVMY4EuOTaSnm2RTQC7uOCZLUfb3oqDm2hk4dC";
 
 export async function verifyCredentials(email: string, password: string) {
   if (email !== process.env.ADMIN_EMAIL) return false;
@@ -57,4 +59,8 @@ export async function requirePageAuth() {
   const session = await getSession();
   if (!session) redirect("/admin/login");
   return session;
+}
+
+export async function requireAuth() {
+  if (!(await getSession())) throw new Error("Unauthorized");
 }
