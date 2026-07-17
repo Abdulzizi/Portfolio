@@ -698,9 +698,8 @@ a[href^="/admin/projects/"]:not([href="/admin/projects/new"]):hover {
     border-right: none !important;
     border-bottom: 1px solid var(--line) !important;
     padding: 12px 0 !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     flex-shrink: 1 !important;
   }
 
@@ -708,8 +707,7 @@ a[href^="/admin/projects/"]:not([href="/admin/projects/new"]):hover {
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
-    overflow-x: auto !important;
-    flex: 1 !important;
+    overflow: hidden !important;
   }
 
   .admin-brand {
@@ -718,43 +716,51 @@ a[href^="/admin/projects/"]:not([href="/admin/projects/new"]):hover {
   }
 
   .admin-nav {
+    flex: 1 !important;
     flex-direction: row !important;
     overflow-x: auto !important;
+    scrollbar-width: none;
   }
 
   .admin-nav-link {
-    padding: 8px 12px !important;
+    min-height: 44px;
+    padding: 13px 12px !important;
     white-space: nowrap !important;
     border-left: none !important;
     border-bottom: 2px solid transparent !important;
   }
 
-  .admin-signout-form {
-    padding: 0 12px !important;
-    flex-shrink: 0 !important;
+  .admin-sidebar-bottom {
+    padding: 8px 12px 0 !important;
+    flex-direction: row !important;
   }
 
+  .admin-view-site,
+  .admin-signout-form {
+    flex: 1;
+  }
+
+  .admin-view-site,
   .admin-signout-btn {
-    width: auto !important;
-    padding: 8px 12px !important;
+    min-height: 44px;
+    padding: 13px 12px !important;
   }
 
   .admin-content {
     padding: 20px 16px !important;
   }
 
-  .admin-content [style*="grid-template-columns: 1fr auto auto auto"],
-  .admin-content [style*="gridTemplateColumns:1fr auto auto auto"] {
+  .admin-list-row {
     grid-template-columns: 1fr !important;
     gap: 6px !important;
     padding: 14px 16px !important;
   }
 
-  .admin-content [style*="grid-template-columns: 1fr 1fr"] {
+  .admin-form-grid {
     grid-template-columns: 1fr !important;
   }
 
-  .admin-content form[style*="max-width"] {
+  .admin-form {
     max-width: 100% !important;
   }
 
@@ -762,6 +768,57 @@ a[href^="/admin/projects/"]:not([href="/admin/projects/new"]):hover {
   .admin-content select,
   .admin-content textarea {
     max-width: 100% !important;
+  }
+
+  .admin-page-header {
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+
+  .admin-page-header > a,
+  .admin-form-actions > button,
+  .admin-task-form > button,
+  .admin-task-form > select {
+    min-height: 44px;
+  }
+
+  .admin-form-actions {
+    align-items: stretch !important;
+    flex-wrap: wrap;
+  }
+
+  .admin-delete-btn {
+    margin-left: 0 !important;
+  }
+
+  .admin-task-form {
+    flex-wrap: wrap;
+  }
+
+  .admin-task-form > input {
+    flex-basis: 100% !important;
+    min-height: 44px;
+  }
+
+  .admin-task-form > select {
+    flex: 1 !important;
+    width: auto !important;
+  }
+
+  .admin-task-row {
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+  }
+
+  .admin-task-row > span:nth-of-type(1) {
+    min-width: calc(100% - 56px);
+  }
+
+  .admin-task-toggle,
+  .admin-task-delete,
+  .admin-editor-button {
+    min-width: 44px !important;
+    min-height: 44px !important;
   }
 }
 
@@ -773,6 +830,16 @@ a[href^="/admin/projects/"]:not([href="/admin/projects/new"]):hover {
 
   .admin-content {
     padding: 16px 12px !important;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+  }
+
+  .admin-page-header > a,
+  .admin-form-actions > button {
+    width: 100%;
+    text-align: center;
   }
 }
 

@@ -50,6 +50,7 @@ export function SettingsForm(props: Props) {
 
   return (
     <form
+      className="admin-form"
       action={action}
       style={{
         display: "flex",

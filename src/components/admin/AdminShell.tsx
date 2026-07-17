@@ -69,6 +69,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
         <div className="admin-sidebar-bottom" style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <a
+            className="admin-view-site"
             href="/"
             target="_blank"
             rel="noopener noreferrer"
@@ -113,7 +114,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </form>
         </div>
       </aside>
-      <main className="admin-content" style={{ flex: 1, padding: "28px 36px", overflowY: "auto" }}>
+      <main className="admin-content" style={{ flex: 1, minWidth: 0, padding: "28px 36px", overflowY: "auto" }}>
         {children}
       </main>
     </div>
