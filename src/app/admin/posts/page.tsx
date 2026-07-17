@@ -18,7 +18,7 @@ export default async function PostsPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
+      <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "36px" }}>
         <div>
           <div
             style={{
@@ -71,6 +71,7 @@ export default async function PostsPage() {
         <div style={{ border: "1px solid var(--line)" }}>
           {posts.map((p) => (
             <Link
+              className="admin-list-row"
               key={p.id}
               href={`/admin/posts/${p.id}`}
               style={{

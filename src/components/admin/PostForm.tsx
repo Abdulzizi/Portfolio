@@ -40,6 +40,7 @@ export function PostForm({ post }: { post?: Post }) {
 
   return (
     <form
+      className="admin-form"
       action={action}
       style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "560px" }}
     >
@@ -72,7 +73,7 @@ export function PostForm({ post }: { post?: Post }) {
         <input name="tags" defaultValue={tagsDefault} placeholder="Design, Engineering" style={inputStyle} />
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", borderTop: "1px solid var(--line)", paddingTop: "24px" }}>
+      <div className="admin-form-actions" style={{ display: "flex", alignItems: "center", gap: "16px", borderTop: "1px solid var(--line)", paddingTop: "24px" }}>
         <button
           type="submit"
           disabled={pending}
@@ -104,6 +105,7 @@ export function PostForm({ post }: { post?: Post }) {
         )}
         {isEdit && (
           <button
+            className="admin-delete-btn"
             type="button"
             onClick={() => {
               if (window.confirm("Delete this post? This cannot be undone.")) {

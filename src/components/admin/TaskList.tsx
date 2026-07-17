@@ -51,7 +51,7 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
         Tasks ({tasks.length})
       </div>
 
-      <form action={action} style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+      <form className="admin-task-form" action={action} style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <input name="title" required placeholder="New task..." style={inputStyle} />
         <select name="priority" defaultValue="medium" style={{ ...inputStyle, flex: "none", width: "100px" }}>
           <option value="low">Low</option>
@@ -86,6 +86,7 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
         <div style={{ border: "1px solid var(--line)" }}>
           {tasks.map((t) => (
             <div
+              className="admin-task-row"
               key={t.id}
               style={{
                 display: "flex",
@@ -98,6 +99,9 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
               }}
             >
               <button
+                className="admin-task-toggle"
+                type="button"
+                aria-label={`Mark ${t.title} as ${t.status === "done" ? "to do" : "done"}`}
                 onClick={() => startToggle(async () => { await toggleTaskStatus(t.id, projectId); })}
                 disabled={toggling}
                 style={{
@@ -134,6 +138,9 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
                 {t.priority}
               </span>
               <button
+                className="admin-task-delete"
+                type="button"
+                aria-label={`Delete ${t.title}`}
                 onClick={() => {
                   if (window.confirm("Delete this task?")) {
                     startDelete(async () => { await deleteTask(t.id, projectId); });
