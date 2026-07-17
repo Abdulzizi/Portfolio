@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { TopBar } from "./TopBar";
 import { CyclingWord } from "./CyclingWord";
@@ -52,8 +51,6 @@ type Props = {
 export function HomePage({ settings, capabilities, projects, posts }: Props) {
   const [inspect, setInspect] = useState(false);
 
-  const toggleInspect = useCallback(() => setInspect((v) => !v), []);
-
   useEffect(() => {
     if (inspect) {
       document.body.classList.add("inspect");
@@ -81,7 +78,7 @@ export function HomePage({ settings, capabilities, projects, posts }: Props) {
   const socials = (settings?.socialLinks as Record<string, string>) ?? {
     email: "jawadabdul307@gmail.com",
     github: "https://github.com/Abdulzizi",
-    linkedin: "#",
+    linkedin: "https://www.linkedin.com/in/abduljawadazizi07/",
   };
 
   return (
@@ -108,7 +105,7 @@ export function HomePage({ settings, capabilities, projects, posts }: Props) {
           I build web and mobile products for small teams, and explore data on the side.
           Mostly <b>the quiet parts</b> that have to keep running when no one is watching.
         </p>
-        <div className="meta">
+        <div className="meta !flex-col !gap-6 sm:!flex-row sm:!gap-10">
           <div>
             Focus<b>Web · Mobile · Data Science</b>
           </div>
@@ -193,7 +190,7 @@ export function HomePage({ settings, capabilities, projects, posts }: Props) {
       {/* About */}
       <section className="about pad" id="about" data-x="section#about">
         <div className="sec-head">
-          <span className="t">002 / About</span>
+          <span className="t">003 / About</span>
           <span className="c">One person, one room</span>
         </div>
         <p className="big">
@@ -225,23 +222,27 @@ export function HomePage({ settings, capabilities, projects, posts }: Props) {
 
       {/* Contact */}
       <section className="contact pad" id="contact" data-x="section#contact">
-        <div className="lead">004 / Let&apos;s work together</div>
+        <div className="lead">005 / Let&apos;s work together</div>
         <a className="big" href={`mailto:${socials.email}`}>
           Say hello<span className="ar">&rarr;</span>
         </a>
-        <div className="links">
+        <div className="links !flex-col !gap-6 sm:!flex-row sm:!gap-10">
           <a href={`mailto:${socials.email}`}>
             <span className="k">Email</span>
             <span className="v">{socials.email}</span>
           </a>
-          <a href={socials.github}>
-            <span className="k">GitHub</span>
-            <span className="v">{socials.github?.replace("https://", "")}</span>
-          </a>
-          <a href={socials.linkedin}>
-            <span className="k">LinkedIn</span>
-            <span className="v">Abdul Jawad Azizi</span>
-          </a>
+          {socials.github && (
+            <a href={socials.github}>
+              <span className="k">GitHub</span>
+              <span className="v">{socials.github.replace("https://", "")}</span>
+            </a>
+          )}
+          {socials.linkedin && (
+            <a href={socials.linkedin}>
+              <span className="k">LinkedIn</span>
+              <span className="v">Abdul Jawad Azizi</span>
+            </a>
+          )}
         </div>
       </section>
 

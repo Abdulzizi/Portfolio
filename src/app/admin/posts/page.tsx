@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import { requirePageAuth } from "@/lib/auth";
 
 const statusColors: Record<string, string> = {
   draft: "var(--muted)",
@@ -8,6 +9,8 @@ const statusColors: Record<string, string> = {
 };
 
 export default async function PostsPage() {
+  await requirePageAuth();
+
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { tags: true } } },

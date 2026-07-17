@@ -3,36 +3,7 @@
 import { useActionState } from "react";
 import { createProject, updateProject, deleteProject } from "@/app/actions/projects";
 import { useState } from "react";
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: "var(--font-geist-mono), monospace",
-  fontSize: "11px",
-  letterSpacing: "0.06em",
-  textTransform: "uppercase",
-  color: "var(--muted)",
-  marginBottom: "6px",
-  display: "block",
-};
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "10px 14px",
-  fontSize: "14px",
-  border: "1px solid var(--line)",
-  background: "transparent",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  appearance: "none" as const,
-  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236C695D' d='M3 4.5L6 8l3-3.5H3z'/%3E%3C/svg%3E")`,
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 12px center",
-  paddingRight: "32px",
-};
+import { labelStyle, inputStyle, selectStyle } from "./admin-styles";
 
 type Project = {
   id: string;
@@ -53,18 +24,21 @@ export function ProjectForm({ project }: { project?: Project }) {
   const isEdit = !!project;
   const [saved, setSaved] = useState(false);
 
-  async function handleSubmit(_prev: unknown, formData: FormData) {
+  async function handleSubmit(_prev: { error?: string }, formData: FormData): Promise<{ error?: string }> {
     if (isEdit) {
-      await updateProject(project!.id, formData);
+      const result = await updateProject(project!.id, formData);
+      if (result?.error) return result;
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      return {};
     } else {
-      await createProject(formData);
+      const result = await createProject(formData);
+      if (result?.error) return result;
+      return {};
     }
-    return {};
   }
 
-  const [, action, pending] = useActionState(handleSubmit, {});
+  const [state, action, pending] = useActionState(handleSubmit, {} as { error?: string });
 
   return (
     <form
@@ -164,10 +138,19 @@ export function ProjectForm({ project }: { project?: Project }) {
             Saved
           </span>
         )}
+        {state?.error && (
+          <span style={{ fontFamily: "var(--font-geist-mono), monospace", fontSize: "11px", color: "#E8542B", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            {state.error}
+          </span>
+        )}
         {isEdit && (
           <button
             type="button"
-            onClick={() => deleteProject(project!.id)}
+            onClick={() => {
+              if (window.confirm("Delete this project and all its tasks? This cannot be undone.")) {
+                deleteProject(project!.id);
+              }
+            }}
             style={{
               marginLeft: "auto",
               padding: "12px 20px",

@@ -37,7 +37,7 @@ async function main() {
       socialLinks: {
         email: "jawadabdul307@gmail.com",
         github: "https://github.com/Abdulzizi",
-        linkedin: "#",
+        linkedin: "https://www.linkedin.com/in/abduljawadazizi07/",
       },
     },
   });
