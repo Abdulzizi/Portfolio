@@ -30,6 +30,18 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   const project = await prisma.project.findUnique({
     where: { slug, visibility: "published" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      kind: true,
+      year: true,
+      status: true,
+      stack: true,
+      liveUrl: true,
+      repoUrl: true,
+      tint: true,
+    },
   });
 
   if (!project) notFound();

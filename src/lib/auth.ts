@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
 const jwtSecret = process.env.JWT_SECRET;
@@ -9,7 +10,7 @@ if (!jwtSecret && process.env.NODE_ENV === "production") {
 const secret = new TextEncoder().encode(jwtSecret || "dev-secret-change-me");
 const COOKIE_NAME = "admin_session";
 
-const ADMIN_HASH = "$2b$10$y4x0CG/dokTTheJpVMY4EuOTaSnm2RTQC7uOCZLUfb3oqDm2hk4dC";
+const ADMIN_HASH = process.env.ADMIN_PASSWORD_HASH || "$2b$10$y4x0CG/dokTTheJpVMY4EuOTaSnm2RTQC7uOCZLUfb3oqDm2hk4dC";
 
 export async function verifyCredentials(email: string, password: string) {
   if (email !== process.env.ADMIN_EMAIL) return false;
@@ -40,6 +41,7 @@ export async function getSession() {
 
   try {
     const { payload } = await jwtVerify(token, secret);
+    if (payload.role !== "admin") return null;
     return payload;
   } catch {
     return null;
@@ -49,4 +51,10 @@ export async function getSession() {
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+}
+
+export async function requirePageAuth() {
+  const session = await getSession();
+  if (!session) redirect("/admin/login");
+  return session;
 }

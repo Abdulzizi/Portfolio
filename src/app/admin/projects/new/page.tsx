@@ -1,6 +1,9 @@
 import { ProjectForm } from "@/components/admin/ProjectForm";
+import { requirePageAuth } from "@/lib/auth";
 
-export default function NewProjectPage() {
+export default async function NewProjectPage() {
+  await requirePageAuth();
+
   return (
     <div>
       <div

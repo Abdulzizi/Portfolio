@@ -10,7 +10,8 @@ export function CustomCursor() {
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
+    const pointer = window.matchMedia("(pointer: fine)");
+    if (mq.matches || !pointer.matches) return;
     document.documentElement.setAttribute("data-custom-cursor", "");
     return () => { document.documentElement.removeAttribute("data-custom-cursor"); };
   }, []);

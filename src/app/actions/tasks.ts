@@ -5,6 +5,9 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth";
 import type { TaskStatus, TaskPriority } from "@/generated/prisma/client";
 
+const VALID_TASK_STATUSES = new Set(["todo", "doing", "done"]);
+const VALID_TASK_PRIORITIES = new Set(["low", "medium", "high"]);
+
 async function requireAuth() {
   const session = await getSession();
   if (!session) throw new Error("Unauthorized");
@@ -18,6 +21,8 @@ export async function createTask(projectId: string, formData: FormData) {
 
   const status = (formData.get("status") as TaskStatus) || "todo";
   const priority = (formData.get("priority") as TaskPriority) || "medium";
+  if (!VALID_TASK_STATUSES.has(status)) return { error: "Invalid status" };
+  if (!VALID_TASK_PRIORITIES.has(priority)) return { error: "Invalid priority" };
   const dueDate = formData.get("dueDate") as string;
   const notes = formData.get("notes") as string;
 
@@ -33,7 +38,8 @@ export async function createTask(projectId: string, formData: FormData) {
       },
     });
     revalidatePath(`/admin/projects/${projectId}`);
-  } catch {
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to create task." };
   }
 }
@@ -41,9 +47,12 @@ export async function createTask(projectId: string, formData: FormData) {
 export async function updateTask(id: string, projectId: string, formData: FormData) {
   await requireAuth();
 
-  const title = formData.get("title") as string;
+  const title = (formData.get("title") as string)?.trim();
+  if (!title) return { error: "Title is required" };
   const status = formData.get("status") as TaskStatus;
   const priority = formData.get("priority") as TaskPriority;
+  if (!VALID_TASK_STATUSES.has(status)) return { error: "Invalid status" };
+  if (!VALID_TASK_PRIORITIES.has(priority)) return { error: "Invalid priority" };
   const dueDate = formData.get("dueDate") as string;
   const notes = formData.get("notes") as string;
 
@@ -59,7 +68,8 @@ export async function updateTask(id: string, projectId: string, formData: FormDa
       },
     });
     revalidatePath(`/admin/projects/${projectId}`);
-  } catch {
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to update task." };
   }
 }
@@ -69,7 +79,8 @@ export async function deleteTask(id: string, projectId: string) {
   try {
     await prisma.task.delete({ where: { id } });
     revalidatePath(`/admin/projects/${projectId}`);
-  } catch {
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to delete task." };
   }
 }
@@ -83,7 +94,8 @@ export async function toggleTaskStatus(id: string, projectId: string) {
     const next: TaskStatus = task.status === "done" ? "todo" : task.status === "todo" ? "doing" : "done";
     await prisma.task.update({ where: { id }, data: { status: next } });
     revalidatePath(`/admin/projects/${projectId}`);
-  } catch {
+  } catch (e: unknown) {
+    if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to toggle task status." };
   }
 }

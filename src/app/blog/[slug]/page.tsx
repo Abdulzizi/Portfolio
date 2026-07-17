@@ -7,6 +7,7 @@ import type { JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TiptapLink from "@tiptap/extension-link";
 import TiptapImage from "@tiptap/extension-image";
+import sanitizeHtml from "sanitize-html";
 
 function renderContent(content: unknown): string | null {
   if (!content || typeof content !== "object") return null;
@@ -19,7 +20,16 @@ function renderContent(content: unknown): string | null {
       TiptapLink,
       TiptapImage,
     ]);
-    return html.trim().length > 0 ? html : null;
+    if (!html.trim().length) return null;
+    return sanitizeHtml(html, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "h1", "h2", "h3"]),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        img: ["src", "alt", "title"],
+        a: ["href", "target", "rel"],
+      },
+      allowedSchemes: ["http", "https", "mailto"],
+    });
   } catch {
     return null;
   }

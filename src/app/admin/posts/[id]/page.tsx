@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { PostForm } from "@/components/admin/PostForm";
+import { requirePageAuth } from "@/lib/auth";
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePageAuth();
+
   const { id } = await params;
 
   const post = await prisma.post.findUnique({
