@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { renderContent } from "@/lib/render-content";
 
 export async function generateMetadata({
   params,
@@ -41,10 +42,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       liveUrl: true,
       repoUrl: true,
       tint: true,
+      content: true,
     },
   });
 
   if (!project) notFound();
+
+  const renderedContent = renderContent(project.content);
 
   return (
     <div className="cs-page">
@@ -104,20 +108,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
 
         <section className="cs-body pad">
-          {project.status !== "done" ? (
+          {renderedContent ? (
+            <div className="cs-content bp-prose" dangerouslySetInnerHTML={{ __html: renderedContent }} />
+          ) : project.status !== "done" ? (
             <div className="cs-placeholder">
               <span className="cs-placeholder-label mono">— Case study in progress</span>
               <p className="cs-placeholder-note">
                 The full write-up for this project is being drafted. Check back soon.
               </p>
             </div>
-          ) : (
-            <div className="cs-content">
-              <p style={{ color: "var(--muted)", fontStyle: "italic" }}>
-                Content coming.
-              </p>
-            </div>
-          )}
+          ) : <div className="cs-placeholder"><span className="cs-placeholder-label mono">— Field record</span><p className="cs-placeholder-note">The project shipped. The decision record is still being written.</p></div>}
         </section>
       </main>
 

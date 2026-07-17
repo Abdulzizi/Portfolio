@@ -13,22 +13,18 @@ export default async function Page() {
     prisma.project.findMany({
       where: { visibility: "published" },
       orderBy: [{ isFeatured: "desc" }, { year: "desc" }],
-      select: { id: true, slug: true, name: true, kind: true, year: true, tint: true },
+      select: { id: true, slug: true, name: true, kind: true, year: true, tint: true, stack: true, status: true },
     }),
     prisma.post.findMany({
       where: { status: "published" },
       orderBy: { publishedAt: "desc" },
       take: 3,
-      select: { id: true, slug: true, title: true, publishedAt: true },
+      select: { id: true, slug: true, title: true, excerpt: true, readingTime: true, publishedAt: true },
     }),
   ]);
 
   const settings = rawSettings
     ? {
-        kickerItems: rawSettings.kickerItems as string[] | null,
-        cycleWords: rawSettings.cycleWords,
-        availabilityText: rawSettings.availabilityText,
-        marqueeItems: rawSettings.marqueeItems,
         socialLinks: rawSettings.socialLinks as Record<string, string> | null,
       }
     : null;

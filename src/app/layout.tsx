@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -35,9 +34,7 @@ export default function RootLayout({
       className={`${bricolage.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
