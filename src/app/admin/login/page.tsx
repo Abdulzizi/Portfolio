@@ -8,6 +8,7 @@ export default function LoginPage() {
 
   return (
     <div
+      className="admin-login"
       style={{
         minHeight: "100vh",
         display: "flex",
@@ -18,6 +19,7 @@ export default function LoginPage() {
       }}
     >
       <form
+        className="admin-login-card"
         action={action}
         style={{
           width: "100%",
@@ -55,6 +57,7 @@ export default function LoginPage() {
 
         {state?.error && (
           <div
+            className="admin-login-error"
             style={{
               fontFamily: "var(--font-geist-mono), monospace",
               fontSize: "12px",
@@ -67,7 +70,10 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div
+          className="admin-login-field"
+          style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+        >
           <label
             htmlFor="email"
             style={{
@@ -97,7 +103,10 @@ export default function LoginPage() {
           />
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <div
+          className="admin-login-field"
+          style={{ display: "flex", flexDirection: "column", gap: "6px" }}
+        >
           <label
             htmlFor="password"
             style={{
@@ -128,6 +137,7 @@ export default function LoginPage() {
         </div>
 
         <button
+          className="admin-login-submit"
           type="submit"
           disabled={pending}
           style={{

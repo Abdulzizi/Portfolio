@@ -1,6 +1,7 @@
 export default function Loading() {
   return (
     <div
+      className="admin-loading"
       style={{
         minHeight: "100dvh",
         display: "flex",
@@ -10,6 +11,7 @@ export default function Loading() {
       }}
     >
       <span
+        className="admin-loading-label"
         style={{
           fontFamily: "var(--font-geist-mono), monospace",
           fontSize: 12,

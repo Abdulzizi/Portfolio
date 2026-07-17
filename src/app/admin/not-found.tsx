@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AdminNotFound() {
   return (
-    <div>
+    <div className="admin-not-found">
       <div
         style={{
           fontFamily: "var(--font-geist-mono), monospace",
