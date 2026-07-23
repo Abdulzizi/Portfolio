@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,14 +13,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const description =
+  "Independent software developer building web, mobile, and data science products. Based in Jakarta.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://ajazizi.dev"),
   title: {
     template: "%s | A. J. Azizi",
     default: "A. J. Azizi | Solo Developer",
   },
-  description:
-    "Independent software developer building web, mobile, and data science products. Based in Jakarta.",
+  description,
+  openGraph: {
+    title: "A. J. Azizi | Solo Developer",
+    description,
+    siteName: "A. J. Azizi",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "A. J. Azizi | Solo Developer",
+    description,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f1ecdf",
 };
 
 export default function RootLayout({
