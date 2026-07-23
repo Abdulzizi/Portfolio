@@ -4,8 +4,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client.js";
 
 const pool = new pg.Pool({
-  connectionString:
-    "postgres://postgres:postgres@localhost:51214/template1?sslmode=disable",
+  connectionString: process.env.DATABASE_URL?.startsWith("prisma+postgres")
+    ? "postgres://postgres:postgres@localhost:51214/template1?sslmode=disable"
+    : process.env.DATABASE_URL,
   max: 10,
 });
 const adapter = new PrismaPg(pool);

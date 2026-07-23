@@ -19,8 +19,14 @@ export async function createTask(projectId: string, formData: FormData) {
   if (!VALID_TASK_STATUSES.has(status)) return { error: "Invalid status" };
   if (!VALID_TASK_PRIORITIES.has(priority))
     return { error: "Invalid priority" };
-  const dueDate = formData.get("dueDate") as string;
+  const dueDateInput = formData.get("dueDate") as string;
   const notes = formData.get("notes") as string;
+
+  let dueDate: Date | null = null;
+  if (dueDateInput) {
+    dueDate = new Date(dueDateInput);
+    if (Number.isNaN(dueDate.getTime())) return { error: "Invalid due date" };
+  }
 
   try {
     await prisma.task.create({
@@ -29,7 +35,7 @@ export async function createTask(projectId: string, formData: FormData) {
         title,
         status,
         priority,
-        dueDate: dueDate ? new Date(dueDate) : null,
+        dueDate,
         notes: notes || null,
       },
     });

@@ -14,14 +14,18 @@ type Props = {
 export function SettingsForm(props: Props) {
   const [saved, setSaved] = useState(false);
 
-  async function handleSubmit(_prev: unknown, formData: FormData) {
-    await updateSettings(formData);
+  async function handleSubmit(
+    _prev: { error?: string },
+    formData: FormData,
+  ): Promise<{ error?: string }> {
+    const result = await updateSettings(formData);
+    if (result?.error) return result;
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
     return {};
   }
 
-  const [, action, pending] = useActionState(handleSubmit, {});
+  const [state, action, pending] = useActionState(handleSubmit, {});
 
   return (
     <form
@@ -115,6 +119,19 @@ export function SettingsForm(props: Props) {
             }}
           >
             Saved
+          </span>
+        )}
+        {state?.error && (
+          <span
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              color: "#E8542B",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
+            {state.error}
           </span>
         )}
       </div>

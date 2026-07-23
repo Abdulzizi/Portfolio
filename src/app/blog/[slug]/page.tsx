@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { renderContent } from "@/lib/render-content";
+import { jsonLdScript } from "@/lib/json-ld";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
 
@@ -23,7 +24,7 @@ export async function generateMetadata({
 
   const post = await prisma.post.findUnique({
     where: { slug, status: "published" },
-    select: { title: true, excerpt: true },
+    select: { title: true, excerpt: true, publishedAt: true },
   });
 
   if (!post) {
@@ -33,6 +34,19 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      siteName: "A. J. Azizi",
+      locale: "en_US",
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt ?? undefined,
+    },
   };
 }
 
@@ -50,6 +64,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="public-page detail-page bp-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScript({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt ?? undefined,
+            datePublished: post.publishedAt?.toISOString(),
+            dateModified: post.updatedAt.toISOString(),
+            author: { "@type": "Person", name: "A. J. Azizi" },
+            url: `https://ajazizi.dev/blog/${post.slug}`,
+          }),
+        }}
+      />
       <TopBar />
       <main className="bp-main">
         <header className="detail-hero detail-hero-note">
