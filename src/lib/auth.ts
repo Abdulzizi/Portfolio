@@ -4,8 +4,15 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
 const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret && process.env.NODE_ENV === "production") {
-  throw new Error("JWT_SECRET environment variable is required");
+if (process.env.NODE_ENV === "production") {
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET environment variable is required");
+  }
+  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD_HASH) {
+    throw new Error(
+      "ADMIN_EMAIL and ADMIN_PASSWORD_HASH environment variables are required",
+    );
+  }
 }
 const secret = new TextEncoder().encode(jwtSecret || "dev-secret-change-me");
 const COOKIE_NAME = "admin_session";
