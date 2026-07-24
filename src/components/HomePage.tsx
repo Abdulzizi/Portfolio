@@ -1,9 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import { TopBar } from "./TopBar";
 import { WorkSection } from "./WorkSection";
+import { BoardView } from "./BoardView";
 
 type SiteSettings = { socialLinks: Record<string, string> | null } | null;
 type Capability = {
@@ -43,7 +41,6 @@ export function HomePage({
   projects: Project[];
   posts: Post[];
 }) {
-  const [view, setView] = useState<"feed" | "index">("feed");
   const socials = settings?.socialLinks ?? {
     email: "jawadabdul307@gmail.com",
     github: "https://github.com/Abdulzizi",
@@ -54,50 +51,33 @@ export function HomePage({
     <div className="aj-board">
       <TopBar home />
       <main>
-        <header className="board-masthead">
-          <div className="board-intro">
-            <p>Abdul Jawad Azizi / Product engineer / Jakarta</p>
-            <h1>
-              I make software
-              <br />
-              make <i>sense.</i>
-            </h1>
-          </div>
-          <div className="board-intro-note">
-            <span>About this place</span>
-            <p>
-              A changing collection of things I built, things I learned, and
-              details I cared enough to keep.
-            </p>
-          </div>
-          <div
-            className="board-controls"
-            role="group"
-            aria-label="Portfolio view"
-          >
-            <button
-              className={view === "feed" ? "active" : ""}
-              onClick={() => setView("feed")}
-              aria-pressed={view === "feed"}
-            >
-              Feed
-            </button>
-            <button
-              className={view === "index" ? "active" : ""}
-              onClick={() => setView("index")}
-              aria-pressed={view === "index"}
-            >
-              Index
-            </button>
-          </div>
-        </header>
-
-        <WorkSection
-          projects={projects}
-          capabilities={capabilities}
-          posts={posts}
-          view={view}
-        />
+        <BoardView
+          intro={
+            <>
+              <div className="board-intro">
+                <p>Abdul Jawad Azizi / Product engineer / Jakarta</p>
+                <h1>
+                  I make software
+                  <br />
+                  make <i>sense.</i>
+                </h1>
+              </div>
+              <div className="board-intro-note">
+                <span>About this place</span>
+                <p>
+                  A changing collection of things I built, things I learned,
+                  and details I cared enough to keep.
+                </p>
+              </div>
+            </>
+          }
+        >
+          <WorkSection
+            projects={projects}
+            capabilities={capabilities}
+            posts={posts}
+          />
+        </BoardView>
       </main>
 
       <aside className="board-contact-tab" id="contact">
