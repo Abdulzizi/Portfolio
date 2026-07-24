@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Blog",
 };
 
+export const revalidate = 60;
+
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",

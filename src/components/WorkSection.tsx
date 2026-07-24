@@ -26,16 +26,14 @@ export function WorkSection({
   projects,
   capabilities,
   posts,
-  view,
 }: {
   projects: Project[];
   capabilities: Capability[];
   posts: Post[];
-  view: "feed" | "index";
 }) {
   return (
-    <section className={`board-content board-view-${view}`} id="board">
-      <div className="board-feed" aria-hidden={view !== "feed"}>
+    <>
+      <div className="board-feed">
         <article className="feed-card feed-personal">
           <span>Personal note / 001</span>
           <p>
@@ -133,7 +131,7 @@ export function WorkSection({
         )}
       </div>
 
-      <div className="board-index" aria-hidden={view !== "index"}>
+      <div className="board-index">
         <header>
           <span>Type</span>
           <span>Title</span>
@@ -167,6 +165,6 @@ export function WorkSection({
           </div>
         </div>
       </div>
-    </section>
+    </>
   );
 }
