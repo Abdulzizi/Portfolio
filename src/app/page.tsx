@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "A. J. Azizi | Solo Developer",
 };
 
+export const revalidate = 60;
+
 export default async function Page() {
   const [rawSettings, capabilities, projects, posts] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),

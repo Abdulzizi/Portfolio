@@ -6,15 +6,9 @@ import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth";
 import type { PostStatus } from "@/generated/prisma/client";
 import { hasImageWithoutAlt } from "@/lib/content-validation";
+import { slugify } from "@/lib/slug";
 
 const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 function parseContent(contentRaw: FormDataEntryValue | null) {
   if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim())
@@ -158,6 +152,7 @@ export async function updatePost(id: string, formData: FormData) {
     });
 
     revalidateAll(slug);
+    if (existing && existing.slug !== slug) revalidateAll(existing.slug);
     revalidatePath(`/admin/posts/${id}`);
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;
@@ -168,8 +163,8 @@ export async function updatePost(id: string, formData: FormData) {
 export async function deletePost(id: string) {
   await requireAuth();
   try {
-    await prisma.post.delete({ where: { id } });
-    revalidateAll();
+    const deleted = await prisma.post.delete({ where: { id } });
+    revalidateAll(deleted.slug);
     redirect("/admin/posts");
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;

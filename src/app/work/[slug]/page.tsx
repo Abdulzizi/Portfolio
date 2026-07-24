@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { renderContent } from "@/lib/render-content";
 import { jsonLdScript } from "@/lib/json-ld";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -61,13 +62,10 @@ export default async function ProjectPage({
       liveUrl: true,
       repoUrl: true,
       tint: true,
-      content: true,
     },
   });
 
   if (!project) notFound();
-
-  const renderedContent = renderContent(project.content);
 
   return (
     <div className="public-page detail-page cs-page">
@@ -150,12 +148,7 @@ export default async function ProjectPage({
         </section>
 
         <section className="detail-body">
-          {renderedContent ? (
-            <div
-              className="cs-content bp-prose"
-              dangerouslySetInnerHTML={{ __html: renderedContent }}
-            />
-          ) : project.status !== "done" ? (
+          {project.status !== "done" ? (
             <div className="cs-placeholder">
               <span className="cs-placeholder-label mono">
                 — Case study in progress
