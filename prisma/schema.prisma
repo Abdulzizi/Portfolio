@@ -18,7 +18,6 @@ model Project {
   tint         String?
   artVariant   Int?      @map("art_variant")
   stack        String[]
-  content      Json?
   isFeatured   Boolean   @default(false) @map("is_featured")
   repoUrl      String?   @map("repo_url")
   liveUrl      String?   @map("live_url")
@@ -28,6 +27,7 @@ model Project {
 
   tasks Task[]
 
+  @@index([visibility])
   @@map("projects")
 }
 
@@ -61,6 +61,7 @@ model Post {
 
   tags PostTag[]
 
+  @@index([status, publishedAt])
   @@map("posts")
 }
 

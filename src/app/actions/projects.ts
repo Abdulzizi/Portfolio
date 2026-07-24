@@ -9,6 +9,7 @@ import {
   normalizeArtVariant,
   normalizeProjectTint,
 } from "@/lib/project-art-variant";
+import { slugify } from "@/lib/slug";
 
 const VALID_PROJECT_STATUSES = new Set([
   "planning",
@@ -17,13 +18,6 @@ const VALID_PROJECT_STATUSES = new Set([
   "archived",
 ]);
 const VALID_VISIBILITIES = new Set(["draft", "published"]);
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
   const slug = base || `item-${Date.now()}`;
@@ -94,6 +88,7 @@ export async function createProject(formData: FormData) {
     revalidatePath("/admin/projects");
     revalidatePath("/");
     revalidatePath("/work");
+    revalidatePath(`/work/${project.slug}`);
     redirect(`/admin/projects/${project.id}`);
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;
@@ -128,6 +123,10 @@ export async function updateProject(id: string, formData: FormData) {
   const privateNotes = formData.get("privateNotes") as string;
   const isFeatured = formData.get("isFeatured") === "on";
 
+  const existing = await prisma.project.findUnique({
+    where: { id },
+    select: { slug: true },
+  });
   const slug = await uniqueSlug(slugify(name), id);
 
   try {
@@ -159,6 +158,10 @@ export async function updateProject(id: string, formData: FormData) {
     revalidatePath(`/admin/projects/${id}`);
     revalidatePath("/");
     revalidatePath("/work");
+    revalidatePath(`/work/${slug}`);
+    if (existing && existing.slug !== slug) {
+      revalidatePath(`/work/${existing.slug}`);
+    }
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;
     return { error: "Failed to update project. Please try again." };
@@ -168,10 +171,11 @@ export async function updateProject(id: string, formData: FormData) {
 export async function deleteProject(id: string) {
   await requireAuth();
   try {
-    await prisma.project.delete({ where: { id } });
+    const deleted = await prisma.project.delete({ where: { id } });
     revalidatePath("/admin/projects");
     revalidatePath("/");
     revalidatePath("/work");
+    revalidatePath(`/work/${deleted.slug}`);
     redirect("/admin/projects");
   } catch (e: unknown) {
     if (e && typeof e === "object" && "digest" in e) throw e;

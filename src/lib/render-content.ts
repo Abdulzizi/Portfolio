@@ -33,7 +33,12 @@ export function renderContent(content: unknown): string | null {
       transformTags: {
         img: (_tagName, attribs) => ({
           tagName: "img",
-          attribs: { ...attribs, alt: attribs.alt?.trim() ?? "" },
+          attribs: {
+            ...attribs,
+            alt: attribs.alt?.trim() ?? "",
+            loading: "lazy",
+            decoding: "async",
+          },
         }),
       },
     });

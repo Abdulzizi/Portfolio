@@ -3,14 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
-
-function isHttpUrl(value: string) {
-  try {
-    return ["http:", "https:"].includes(new URL(value).protocol);
-  } catch {
-    return false;
-  }
-}
+import { isHttpUrl, isEmail } from "@/lib/format-validation";
 
 export async function updateSettings(formData: FormData) {
   await requireAuth();
@@ -18,7 +11,7 @@ export async function updateSettings(formData: FormData) {
   const github = formData.get("socialGithub") as string;
   const linkedin = formData.get("socialLinkedin") as string;
 
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (email && !isEmail(email)) {
     return { error: "Invalid email address" };
   }
   if (github && !isHttpUrl(github)) return { error: "Invalid GitHub URL" };

@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Work",
 };
 
+export const revalidate = 60;
+
 export default async function WorkPage() {
   const projects = await prisma.project.findMany({
     where: { visibility: "published" },
