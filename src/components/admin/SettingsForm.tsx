@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { updateSettings } from "@/app/actions/settings";
 import { useState } from "react";
 import { inputStyle, labelStyle } from "./admin-styles";
+import { FormStatus } from "./FormStatus";
 
 type Props = {
   socialEmail: string;
@@ -108,32 +109,7 @@ export function SettingsForm(props: Props) {
         >
           {pending ? "Saving..." : "Save settings"}
         </button>
-        {saved && (
-          <span
-            style={{
-              fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "11px",
-              color: "var(--accent)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-            }}
-          >
-            Saved
-          </span>
-        )}
-        {state?.error && (
-          <span
-            style={{
-              fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: "11px",
-              color: "#E8542B",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-            }}
-          >
-            {state.error}
-          </span>
-        )}
+        <FormStatus saved={saved} error={state?.error} />
       </div>
     </form>
   );

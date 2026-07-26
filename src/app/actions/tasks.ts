@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
+import { isRedirectError } from "@/lib/action-helpers";
 import type { TaskStatus, TaskPriority } from "@/generated/prisma/client";
 
 const VALID_TASK_STATUSES = new Set(["todo", "doing", "done"]);
@@ -41,7 +42,7 @@ export async function createTask(projectId: string, formData: FormData) {
     });
     revalidatePath(`/admin/projects/${projectId}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to create task." };
   }
 }
@@ -52,7 +53,7 @@ export async function deleteTask(id: string, projectId: string) {
     await prisma.task.delete({ where: { id } });
     revalidatePath(`/admin/projects/${projectId}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to delete task." };
   }
 }
@@ -72,7 +73,7 @@ export async function toggleTaskStatus(id: string, projectId: string) {
     await prisma.task.update({ where: { id }, data: { status: next } });
     revalidatePath(`/admin/projects/${projectId}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to toggle task status." };
   }
 }
