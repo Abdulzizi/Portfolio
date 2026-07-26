@@ -61,9 +61,9 @@ export default function LoginPage() {
             style={{
               fontFamily: "var(--font-geist-mono), monospace",
               fontSize: "12px",
-              color: "#E8542B",
+              color: "var(--danger)",
               padding: "10px 14px",
-              border: "1px solid #E8542B",
+              border: "1px solid var(--danger)",
             }}
           >
             {state.error}

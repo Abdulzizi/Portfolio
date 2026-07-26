@@ -7,6 +7,7 @@
   --muted: #656158;
   --line: #11110f;
   --accent: #ff5938;
+  --danger: #e8542b;
   --card: #11110f;
   --cardfg: #f1ecdf;
 }
@@ -567,6 +568,9 @@ select:focus-visible,
 .admin-login input:focus { outline: 3px solid var(--lab-orange) !important; outline-offset: 0; }
 .admin-delete-btn,
 .admin-task-delete { border: 1px solid var(--lab-ink) !important; color: var(--lab-ink) !important; background: var(--lab-orange) !important; }
+.admin-form-msg { font-family: var(--font-geist-mono), monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+.admin-form-msg--saved { color: var(--accent); }
+.admin-form-msg--error { color: var(--danger); }
 
 .admin-login { min-height: 100dvh; }
 .admin-login-card {

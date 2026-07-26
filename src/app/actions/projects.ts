@@ -10,6 +10,11 @@ import {
   normalizeProjectTint,
 } from "@/lib/project-art-variant";
 import { slugify } from "@/lib/slug";
+import {
+  parseCsv,
+  isRedirectError,
+  uniqueSlug,
+} from "@/lib/action-helpers";
 
 const VALID_PROJECT_STATUSES = new Set([
   "planning",
@@ -19,17 +24,14 @@ const VALID_PROJECT_STATUSES = new Set([
 ]);
 const VALID_VISIBILITIES = new Set(["draft", "published"]);
 
-async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  const slug = base || `item-${Date.now()}`;
-  let suffix = 0;
-  while (true) {
-    const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
-    const existing = await prisma.project.findUnique({
-      where: { slug: candidate },
-    });
-    if (!existing || existing.id === excludeId) return candidate;
-    suffix++;
-  }
+function projectSlug(name: string, excludeId?: string) {
+  return uniqueSlug(
+    slugify(name) || `item-${Date.now()}`,
+    async (slug: string) =>
+      (await prisma.project.findUnique({ where: { slug }, select: { id: true } }))
+        ?.id ?? null,
+    excludeId,
+  );
 }
 
 export async function createProject(formData: FormData) {
@@ -59,7 +61,7 @@ export async function createProject(formData: FormData) {
   const privateNotes = formData.get("privateNotes") as string;
   const isFeatured = formData.get("isFeatured") === "on";
 
-  const slug = await uniqueSlug(slugify(name));
+  const slug = await projectSlug(name);
 
   try {
     const project = await prisma.project.create({
@@ -72,12 +74,7 @@ export async function createProject(formData: FormData) {
         visibility,
         tint,
         artVariant,
-        stack: stackRaw
-          ? stackRaw
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
+        stack: parseCsv(stackRaw),
         repoUrl: repoUrl || null,
         liveUrl: liveUrl || null,
         privateNotes: privateNotes || null,
@@ -91,7 +88,7 @@ export async function createProject(formData: FormData) {
     revalidatePath(`/work/${project.slug}`);
     redirect(`/admin/projects/${project.id}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to create project. Please try again." };
   }
 }
@@ -127,7 +124,7 @@ export async function updateProject(id: string, formData: FormData) {
     where: { id },
     select: { slug: true },
   });
-  const slug = await uniqueSlug(slugify(name), id);
+  const slug = await projectSlug(name, id);
 
   try {
     await prisma.project.update({
@@ -141,12 +138,7 @@ export async function updateProject(id: string, formData: FormData) {
         visibility,
         tint,
         artVariant,
-        stack: stackRaw
-          ? stackRaw
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
+        stack: parseCsv(stackRaw),
         repoUrl: repoUrl || null,
         liveUrl: liveUrl || null,
         privateNotes: privateNotes || null,
@@ -163,7 +155,7 @@ export async function updateProject(id: string, formData: FormData) {
       revalidatePath(`/work/${existing.slug}`);
     }
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to update project. Please try again." };
   }
 }
@@ -178,7 +170,7 @@ export async function deleteProject(id: string) {
     revalidatePath(`/work/${deleted.slug}`);
     redirect("/admin/projects");
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to delete project." };
   }
 }

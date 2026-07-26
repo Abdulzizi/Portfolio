@@ -7,6 +7,11 @@ import { requireAuth } from "@/lib/auth";
 import type { PostStatus } from "@/generated/prisma/client";
 import { hasImageWithoutAlt } from "@/lib/content-validation";
 import { slugify } from "@/lib/slug";
+import {
+  parseCsv,
+  isRedirectError,
+  uniqueSlug,
+} from "@/lib/action-helpers";
 
 const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
 
@@ -23,26 +28,18 @@ function parseContent(contentRaw: FormDataEntryValue | null) {
   }
 }
 
-async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
-  const slug = base || `post-${Date.now()}`;
-  let suffix = 0;
-  while (true) {
-    const candidate = suffix === 0 ? slug : `${slug}-${suffix}`;
-    const existing = await prisma.post.findUnique({
-      where: { slug: candidate },
-    });
-    if (!existing || existing.id === excludeId) return candidate;
-    suffix++;
-  }
+function postSlug(title: string, excludeId?: string) {
+  return uniqueSlug(
+    slugify(title) || `post-${Date.now()}`,
+    async (slug: string) =>
+      (await prisma.post.findUnique({ where: { slug }, select: { id: true } }))
+        ?.id ?? null,
+    excludeId,
+  );
 }
 
 async function resolveTagIds(tagsRaw: string) {
-  const names = tagsRaw
-    ? tagsRaw
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
-    : [];
+  const names = parseCsv(tagsRaw);
 
   const tagIds: string[] = [];
   for (const name of names) {
@@ -84,7 +81,7 @@ export async function createPost(formData: FormData) {
   if (hasImageWithoutAlt(content))
     return { error: "Every image needs alternative text" };
 
-  const slug = await uniqueSlug(slugify(title));
+  const slug = await postSlug(title);
   const tagIds = await resolveTagIds(tagsRaw);
 
   try {
@@ -106,7 +103,7 @@ export async function createPost(formData: FormData) {
     revalidatePath(`/admin/posts/${post.id}`);
     redirect(`/admin/posts/${post.id}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to create post. Please try again." };
   }
 }
@@ -126,7 +123,7 @@ export async function updatePost(id: string, formData: FormData) {
     return { error: "Every image needs alternative text" };
 
   const existing = await prisma.post.findUnique({ where: { id } });
-  const slug = await uniqueSlug(slugify(title), id);
+  const slug = await postSlug(title, id);
   const tagIds = await resolveTagIds(tagsRaw);
 
   try {
@@ -155,7 +152,7 @@ export async function updatePost(id: string, formData: FormData) {
     if (existing && existing.slug !== slug) revalidateAll(existing.slug);
     revalidatePath(`/admin/posts/${id}`);
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to update post. Please try again." };
   }
 }
@@ -167,7 +164,7 @@ export async function deletePost(id: string) {
     revalidateAll(deleted.slug);
     redirect("/admin/posts");
   } catch (e: unknown) {
-    if (e && typeof e === "object" && "digest" in e) throw e;
+    if (isRedirectError(e)) throw e;
     return { error: "Failed to delete post." };
   }
 }
