@@ -4,7 +4,7 @@ import { useActionState, useTransition } from "react";
 import { createTask, deleteTask, toggleTaskStatus } from "@/app/actions/tasks";
 
 const statusLabel: Record<string, string> = { todo: "To do", doing: "Doing", done: "Done" };
-const priorityColor: Record<string, string> = { low: "var(--muted)", medium: "var(--accent)", high: "#E8542B" };
+const priorityColor: Record<string, string> = { low: "var(--muted)", medium: "var(--accent)", high: "var(--danger)" };
 
 type Task = {
   id: string;

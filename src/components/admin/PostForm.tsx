@@ -6,6 +6,7 @@ import { useState } from "react";
 import { TipTapEditor } from "@/components/admin/TipTapEditor";
 import type { JSONContent } from "@tiptap/react";
 import { labelStyle, inputStyle, selectStyle } from "./admin-styles";
+import { FormStatus } from "./FormStatus";
 
 type Post = {
   id: string;
@@ -93,16 +94,7 @@ export function PostForm({ post }: { post?: Post }) {
         >
           {pending ? "Saving..." : isEdit ? "Save" : "Create post"}
         </button>
-        {saved && (
-          <span style={{ fontFamily: "var(--font-geist-mono), monospace", fontSize: "11px", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-            Saved
-          </span>
-        )}
-        {state?.error && (
-          <span style={{ fontFamily: "var(--font-geist-mono), monospace", fontSize: "11px", color: "#E8542B", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-            {state.error}
-          </span>
-        )}
+        <FormStatus saved={saved} error={state?.error} />
         {isEdit && (
           <button
             className="admin-delete-btn"
@@ -119,9 +111,6 @@ export function PostForm({ post }: { post?: Post }) {
               fontFamily: "var(--font-geist-mono), monospace",
               letterSpacing: "0.06em",
               textTransform: "uppercase",
-              background: "transparent",
-              color: "#E8542B",
-              border: "1px solid #E8542B",
               cursor: "pointer",
             }}
           >
