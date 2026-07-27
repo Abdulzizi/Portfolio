@@ -41,10 +41,15 @@ export function HomePage({
   projects: Project[];
   posts: Post[];
 }) {
-  const socials = settings?.socialLinks ?? {
-    email: "jawadabdul307@gmail.com",
-    github: "https://github.com/Abdulzizi",
-    linkedin: "https://www.linkedin.com/in/abduljawadazizi07/",
+  // Merge per key: a saved socialLinks object may be partial or contain
+  // empty strings (the settings form always writes all three keys), so a
+  // whole-object `?? defaults` would leave e.g. email undefined/"" ->
+  // href="mailto:". Fall back to the default for each blank field.
+  const saved = settings?.socialLinks ?? {};
+  const socials = {
+    email: saved.email || "jawadabdul307@gmail.com",
+    github: saved.github || "https://github.com/Abdulzizi",
+    linkedin: saved.linkedin || "https://www.linkedin.com/in/abduljawadazizi07/",
   };
 
   return (
