@@ -53,7 +53,11 @@ async function resolveTagIds(tagsRaw: string) {
       });
       tagIds.push(tag.id);
     } catch {
-      const existing = await prisma.tag.findUnique({ where: { name } });
+      // upsert matched no existing `name`, so its create ran and hit a
+      // unique violation — which can only be the `slug` (a different name
+      // that slugifies to the same value). Reuse that tag instead of
+      // silently dropping this one. Looking up by `name` here would miss.
+      const existing = await prisma.tag.findUnique({ where: { slug: tagSlug } });
       if (existing) tagIds.push(existing.id);
     }
   }
