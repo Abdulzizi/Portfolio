@@ -14,7 +14,10 @@ export async function createSession() {
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // Always Secure. http://localhost is a secure context, so this doesn't
+    // break local dev, but it prevents the session cookie from being sent
+    // over plain HTTP on a misconfigured (non-production NODE_ENV) deploy.
+    secure: true,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
