@@ -19,8 +19,10 @@ const secret = new TextEncoder().encode(jwtSecret);
 export const COOKIE_NAME = "admin_session";
 
 export async function verifyCredentials(email: string, password: string) {
-  if (email !== ADMIN_EMAIL) return false;
-  return bcrypt.compare(password, ADMIN_HASH);
+  // Always run bcrypt.compare, even for a wrong email, so response time
+  // doesn't reveal whether the email matched (user-enumeration oracle).
+  const passwordOk = await bcrypt.compare(password, ADMIN_HASH);
+  return passwordOk && email === ADMIN_EMAIL;
 }
 
 export async function signSessionToken() {
@@ -33,7 +35,10 @@ export async function signSessionToken() {
 
 export async function verifySessionToken(token: string) {
   try {
-    const { payload } = await jwtVerify(token, secret);
+    // Pin the algorithm: only accept HS256, the alg we sign with.
+    const { payload } = await jwtVerify(token, secret, {
+      algorithms: ["HS256"],
+    });
     if (payload.role !== "admin") return null;
     return payload;
   } catch {
