@@ -4,18 +4,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { renderContent } from "@/lib/render-content";
 import { jsonLdScript } from "@/lib/json-ld";
+import { formatDate } from "@/lib/format-date";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
 
 export const revalidate = 60;
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
 
 export async function generateMetadata({
   params,
