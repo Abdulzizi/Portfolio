@@ -15,6 +15,7 @@ import {
   isRedirectError,
   uniqueSlug,
 } from "@/lib/action-helpers";
+import { isHttpUrl } from "@/lib/format-validation";
 
 const VALID_PROJECT_STATUSES = new Set([
   "planning",
@@ -67,6 +68,15 @@ export async function createProject(formData: FormData) {
   const liveUrl = formData.get("liveUrl") as string;
   const privateNotes = formData.get("privateNotes") as string;
   const isFeatured = formData.get("isFeatured") === "on";
+
+  // These are rendered as <a href> on the public work page; reject any
+  // non-http(s) scheme (e.g. javascript:) the same way settings.ts does.
+  if (repoUrl && !isHttpUrl(repoUrl)) {
+    return { error: "Invalid repository URL" };
+  }
+  if (liveUrl && !isHttpUrl(liveUrl)) {
+    return { error: "Invalid live URL" };
+  }
 
   const slug = await projectSlug(name);
 
@@ -123,6 +133,15 @@ export async function updateProject(id: string, formData: FormData) {
   const liveUrl = formData.get("liveUrl") as string;
   const privateNotes = formData.get("privateNotes") as string;
   const isFeatured = formData.get("isFeatured") === "on";
+
+  // These are rendered as <a href> on the public work page; reject any
+  // non-http(s) scheme (e.g. javascript:) the same way settings.ts does.
+  if (repoUrl && !isHttpUrl(repoUrl)) {
+    return { error: "Invalid repository URL" };
+  }
+  if (liveUrl && !isHttpUrl(liveUrl)) {
+    return { error: "Invalid live URL" };
+  }
 
   const existing = await prisma.project.findUnique({
     where: { id },
