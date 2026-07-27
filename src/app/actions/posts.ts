@@ -61,7 +61,11 @@ async function resolveTagIds(tagsRaw: string) {
       if (existing) tagIds.push(existing.id);
     }
   }
-  return tagIds;
+  // De-dupe: two input names can resolve to the same tag (e.g. "React,React"
+  // or slug collisions like "Next.js,next-js"), and PostTag's composite PK
+  // @@id([postId, tagId]) rejects a repeated tag on the same post — which
+  // would fail the entire save.
+  return [...new Set(tagIds)];
 }
 
 function revalidateAll(slug?: string) {
