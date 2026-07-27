@@ -15,6 +15,9 @@ import {
 
 const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
 
+// Parse the TipTap JSON content field. Returns undefined for anything that
+// isn't a non-empty JSON object with a `type` (empty editor, malformed input),
+// so the caller can leave the column untouched rather than store junk.
 function parseContent(contentRaw: FormDataEntryValue | null) {
   if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim())
     return undefined;
