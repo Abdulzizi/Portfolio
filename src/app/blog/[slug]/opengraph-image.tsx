@@ -1,20 +1,11 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/db";
+import { formatDate } from "@/lib/format-date";
+import { OgFrame, ogNotFound, OG_SIZE, OG_CONTENT_TYPE } from "@/lib/og";
 
 export const alt = "Blog post";
-export const size = {
-  width: 1200,
-  height: 630,
-};
-export const contentType = "image/png";
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
+export const size = OG_SIZE;
+export const contentType = OG_CONTENT_TYPE;
 
 export default async function Image({
   params,
@@ -29,52 +20,12 @@ export default async function Image({
   });
 
   if (!post) {
-    return new ImageResponse(
-      (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "flex-start",
-            backgroundColor: "#ff5938",
-            padding: "100px",
-            fontFamily: "sans-serif",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 80,
-              fontWeight: 700,
-              color: "#11110f",
-            }}
-          >
-            Post not found
-          </div>
-        </div>
-      ),
-      { ...size }
-    );
+    return ogNotFound("Post not found", "#ff5938");
   }
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          backgroundColor: "#ff5938",
-          padding: "100px",
-          fontFamily: "sans-serif",
-        }}
-      >
+      <OgFrame bg="#ff5938">
         {post.publishedAt && (
           <div
             style={{
@@ -112,10 +63,8 @@ export default async function Image({
             {post.excerpt}
           </div>
         )}
-      </div>
+      </OgFrame>
     ),
-    {
-      ...size,
-    }
+    OG_SIZE,
   );
 }

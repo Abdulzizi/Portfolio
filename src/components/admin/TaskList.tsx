@@ -101,7 +101,13 @@ export function TaskList({ tasks, projectId }: { tasks: Task[]; projectId: strin
               <button
                 className="admin-task-toggle"
                 type="button"
-                aria-label={`Mark ${t.title} as ${t.status === "done" ? "to do" : "done"}`}
+                aria-label={`Mark ${t.title} as ${
+                  t.status === "done"
+                    ? "to do"
+                    : t.status === "todo"
+                      ? "in progress"
+                      : "done"
+                }`}
                 onClick={() => startToggle(async () => { await toggleTaskStatus(t.id, projectId); })}
                 disabled={toggling}
                 style={{
