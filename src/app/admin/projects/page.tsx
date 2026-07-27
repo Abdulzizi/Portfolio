@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { requirePageAuth } from "@/lib/auth";
 import Link from "next/link";
 
 const statusColors: Record<string, string> = {
@@ -9,6 +10,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default async function ProjectsPage() {
+  await requirePageAuth();
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: "desc" },
     include: { _count: { select: { tasks: true } } },
