@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/lib/db";
+import { formatDate } from "@/lib/format-date";
 
 export const alt = "Blog post";
 export const size = {
@@ -7,14 +8,6 @@ export const size = {
   height: 630,
 };
 export const contentType = "image/png";
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
 
 export default async function Image({
   params,
