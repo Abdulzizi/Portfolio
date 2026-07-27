@@ -1,28 +1,14 @@
 import { ImageResponse } from "next/og";
+import { OgFrame, OG_SIZE, OG_CONTENT_TYPE } from "@/lib/og";
 
 export const alt = "A. J. Azizi";
-export const size = {
-  width: 1200,
-  height: 630,
-};
-export const contentType = "image/png";
+export const size = OG_SIZE;
+export const contentType = OG_CONTENT_TYPE;
 
 export default async function Image() {
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          backgroundColor: "#d8ff35",
-          padding: "100px",
-          fontFamily: "sans-serif",
-        }}
-      >
+      <OgFrame bg="#d8ff35">
         <div
           style={{
             display: "flex",
@@ -57,10 +43,8 @@ export default async function Image() {
         >
           I make software make sense.
         </div>
-      </div>
+      </OgFrame>
     ),
-    {
-      ...size,
-    }
+    OG_SIZE,
   );
 }
