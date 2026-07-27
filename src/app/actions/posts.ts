@@ -15,6 +15,9 @@ import {
 
 const VALID_POST_STATUSES = new Set(["draft", "scheduled", "published"]);
 
+// Parse the TipTap JSON content field. Returns undefined for anything that
+// isn't a non-empty JSON object with a `type` (empty editor, malformed input),
+// so the caller can leave the column untouched rather than store junk.
 function parseContent(contentRaw: FormDataEntryValue | null) {
   if (!contentRaw || typeof contentRaw !== "string" || !contentRaw.trim())
     return undefined;
@@ -61,7 +64,11 @@ async function resolveTagIds(tagsRaw: string) {
       if (existing) tagIds.push(existing.id);
     }
   }
-  return tagIds;
+  // De-dupe: two input names can resolve to the same tag (e.g. "React,React"
+  // or slug collisions like "Next.js,next-js"), and PostTag's composite PK
+  // @@id([postId, tagId]) rejects a repeated tag on the same post — which
+  // would fail the entire save.
+  return [...new Set(tagIds)];
 }
 
 function revalidateAll(slug?: string) {

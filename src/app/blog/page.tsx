@@ -3,20 +3,13 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { TopBar } from "@/components/TopBar";
 import { PublicFooter } from "@/components/PublicFooter";
+import { formatDate } from "@/lib/format-date";
 
 export const metadata: Metadata = {
   title: "Blog",
 };
 
 export const revalidate = 60;
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
 
 export default async function BlogPage() {
   const posts = await prisma.post.findMany({

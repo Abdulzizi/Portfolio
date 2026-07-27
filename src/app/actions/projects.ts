@@ -34,6 +34,13 @@ function projectSlug(name: string, excludeId?: string) {
   );
 }
 
+function revalidateProject(slug?: string) {
+  revalidatePath("/");
+  revalidatePath("/work");
+  if (slug) revalidatePath(`/work/${slug}`);
+  revalidatePath("/admin/projects");
+}
+
 export async function createProject(formData: FormData) {
   await requireAuth();
 
@@ -82,10 +89,7 @@ export async function createProject(formData: FormData) {
       },
     });
 
-    revalidatePath("/admin/projects");
-    revalidatePath("/");
-    revalidatePath("/work");
-    revalidatePath(`/work/${project.slug}`);
+    revalidateProject(project.slug);
     redirect(`/admin/projects/${project.id}`);
   } catch (e: unknown) {
     if (isRedirectError(e)) throw e;
@@ -146,11 +150,8 @@ export async function updateProject(id: string, formData: FormData) {
       },
     });
 
-    revalidatePath("/admin/projects");
+    revalidateProject(slug);
     revalidatePath(`/admin/projects/${id}`);
-    revalidatePath("/");
-    revalidatePath("/work");
-    revalidatePath(`/work/${slug}`);
     if (existing && existing.slug !== slug) {
       revalidatePath(`/work/${existing.slug}`);
     }
@@ -164,10 +165,7 @@ export async function deleteProject(id: string) {
   await requireAuth();
   try {
     const deleted = await prisma.project.delete({ where: { id } });
-    revalidatePath("/admin/projects");
-    revalidatePath("/");
-    revalidatePath("/work");
-    revalidatePath(`/work/${deleted.slug}`);
+    revalidateProject(deleted.slug);
     redirect("/admin/projects");
   } catch (e: unknown) {
     if (isRedirectError(e)) throw e;
