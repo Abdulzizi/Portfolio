@@ -1,143 +1,118 @@
-"use client";
-
-import { useEffect, useCallback } from "react";
-import { useState } from "react";
+import Link from "next/link";
 import { TopBar } from "./TopBar";
-import { CyclingWord } from "./CyclingWord";
-import { Marquee } from "./Marquee";
 import { WorkSection } from "./WorkSection";
-import { Capabilities } from "./Capabilities";
-import { CustomCursor } from "./CustomCursor";
-import { SmoothScroll } from "./SmoothScroll";
+import { BoardView } from "./BoardView";
 
-export function HomePage() {
-  const [inspect, setInspect] = useState(false);
+type SiteSettings = { socialLinks: Record<string, string> | null } | null;
+type Capability = {
+  id: string;
+  order: number;
+  heading: string;
+  description: string;
+};
+type Project = {
+  id: string;
+  slug: string;
+  name: string;
+  kind: string | null;
+  year: number;
+  tint: string | null;
+  artVariant: number | null;
+  stack: string[];
+  status: string;
+};
+type Post = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  readingTime: number | null;
+  publishedAt: Date | null;
+};
 
-  const toggleInspect = useCallback(() => setInspect((v) => !v), []);
-
-  useEffect(() => {
-    if (inspect) {
-      document.body.classList.add("inspect");
-    } else {
-      document.body.classList.remove("inspect");
-    }
-  }, [inspect]);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "i" && !/input|textarea/i.test((e.target as HTMLElement)?.tagName)) {
-        setInspect((v) => !v);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
+export function HomePage({
+  settings,
+  capabilities,
+  projects,
+  posts,
+}: {
+  settings: SiteSettings;
+  capabilities: Capability[];
+  projects: Project[];
+  posts: Post[];
+}) {
+  // Merge per key: a saved socialLinks object may be partial or contain
+  // empty strings (the settings form always writes all three keys), so a
+  // whole-object `?? defaults` would leave e.g. email undefined/"" ->
+  // href="mailto:". Fall back to the default for each blank field.
+  const saved = settings?.socialLinks ?? {};
+  const socials = {
+    email: saved.email || "jawadabdul307@gmail.com",
+    github: saved.github || "https://github.com/Abdulzizi",
+    linkedin: saved.linkedin || "https://www.linkedin.com/in/abduljawadazizi07/",
+  };
 
   return (
-    <>
-      <SmoothScroll />
-      <CustomCursor />
-      <TopBar />
+    <div className="aj-board">
+      <TopBar home />
+      <main>
+        <BoardView
+          intro={
+            <>
+              <div className="board-intro">
+                <p>Abdul Jawad Azizi / Product engineer / Jakarta</p>
+                <h1>
+                  I make software
+                  <br />
+                  make <i>sense.</i>
+                </h1>
+              </div>
+              <div className="board-intro-note">
+                <span>About this place</span>
+                <p>
+                  A changing collection of things I built, things I learned,
+                  and details I cared enough to keep.
+                </p>
+              </div>
+            </>
+          }
+        >
+          <WorkSection
+            projects={projects}
+            capabilities={capabilities}
+            posts={posts}
+          />
+        </BoardView>
+      </main>
 
-      {/* Hero */}
-      <section className="hero pad" data-x="section#hero">
-        <div className="kicker">
-          <span>Independent Software Developer</span>
-          <span>/</span>
-          <span>Jakarta, GMT +7</span>
-          <span>/</span>
-          <span>Est. 2022</span>
-        </div>
-        <h1 data-x="h1">
-          A solo developer
-          <br />
-          building <CyclingWord />
-          <br />
-          software.
-        </h1>
-        <p className="sub">
-          I build web and mobile products for small teams, and explore data on the side.
-          Mostly <b>the quiet parts</b> that have to keep running when no one is watching.
-        </p>
-        <div className="meta">
-          <div>
-            Focus<b>Web · Mobile · Data Science</b>
-          </div>
-          <div>
-            Status<b>Building, learning</b>
-          </div>
-          <div>
-            Working since<b>2022, four years</b>
-          </div>
-          <div>
-            Availability<b>Open for work</b>
-          </div>
-        </div>
-      </section>
-
-      <Marquee />
-      <WorkSection />
-
-      {/* About */}
-      <section className="about pad" id="about" data-x="section#about">
-        <div className="sec-head">
-          <span className="t">002 / About</span>
-          <span className="c">One person, one room</span>
-        </div>
-        <p className="big">
-          I build the kind of software that is <em>invisible</em> to the people who depend
-          on it.
-        </p>
-        <div className="cols">
-          <p>
-            Four years building for the web and mobile, with a growing interest in data
-            science. I prefer Postgres and a clean codebase to anything complicated, and I
-            would rather write a clear page than a clever one.
-          </p>
-          <p>
-            The studio is one developer. No standups, no roadmap deck, no growth team. The
-            work is careful, and the replies are slow but honest.
-          </p>
-          <p>
-            I am still early, no shipped products yet, but I am building every day and
-            looking for the right problems to solve.
-          </p>
-          <p>
-            Away from the keyboard I read long fiction, draw in ink, and walk the ridges
-            above the city. I believe in slow software and fewer meetings.
-          </p>
-        </div>
-      </section>
-
-      <Capabilities />
-
-      {/* Contact */}
-      <section className="contact pad" id="contact" data-x="section#contact">
-        <div className="lead">004 / Let&apos;s work together</div>
-        <a className="big" href="mailto:jawadabdul307@gmail.com">
-          Say hello<span className="ar">&rarr;</span>
+      <aside className="board-contact-tab" id="contact">
+        <a href={`mailto:${socials.email}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 5h18v14H3zM3 6l9 7 9-7" />
+          </svg>
+          <span>Email</span>
         </a>
-        <div className="links">
-          <a href="mailto:jawadabdul307@gmail.com">
-            <span className="k">Email</span>
-            <span className="v">jawadabdul307@gmail.com</span>
+        {socials.github && (
+          <a href={socials.github} aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.87c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82a9.6 9.6 0 0 1 2.5.34c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.77c0 .27.18.58.69.48A10 10 0 0 0 12 2z" />
+            </svg>
           </a>
-          <a href="https://github.com/Abdulzizi">
-            <span className="k">GitHub</span>
-            <span className="v">github.com/Abdulzizi</span>
+        )}
+        {socials.linkedin && (
+          <a href={socials.linkedin} aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 8.5V19M5 5v.01M9.5 19v-6c0-2 1.2-3.5 3.2-3.5s3.3 1.3 3.3 3.8V19M9.5 10v9M3 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" />
+            </svg>
           </a>
-          <a href="#">
-            <span className="k">LinkedIn</span>
-            <span className="v">Abdul Jawad Azizi</span>
-          </a>
-        </div>
-      </section>
+        )}
+      </aside>
 
-      <footer className="site-footer">
-        <span>&copy; 2026 Abdul Jawad Azizi</span>
-        <span>Built with Next.js</span>
-        <span>Try the Inspect switch &nearr;</span>
+      <footer className="board-footer">
+        <span>AJ / 2026</span>
+        <span>Built and maintained in Jakarta</span>
+        <Link href="/admin/login">Private entrance</Link>
       </footer>
-    </>
+    </div>
   );
 }

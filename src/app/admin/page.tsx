@@ -1,0 +1,172 @@
+import Link from "next/link";
+import { prisma } from "@/lib/db";
+import { requirePageAuth } from "@/lib/auth";
+
+export default async function AdminDashboard() {
+  await requirePageAuth();
+
+  const [projectCount, postCount, draftPosts, draftProjects] =
+    await Promise.all([
+      prisma.project.count(),
+      prisma.post.count(),
+      prisma.post.count({ where: { status: "draft" } }),
+      prisma.project.count({ where: { visibility: "draft" } }),
+    ]);
+
+  const stats = [
+    { label: "Projects", value: projectCount },
+    { label: "Draft projects", value: draftProjects },
+    { label: "Posts", value: postCount },
+    { label: "Draft posts", value: draftPosts },
+  ];
+
+  return (
+    <div className="admin-dashboard">
+      <div
+        className="admin-stat-grid"
+        style={{
+          fontFamily: "var(--font-geist-mono), monospace",
+          fontSize: "11px",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+          marginBottom: "8px",
+        }}
+      >
+        Overview
+      </div>
+      <h1
+        style={{
+          fontSize: "28px",
+          fontWeight: 800,
+          letterSpacing: "-0.03em",
+          margin: "0 0 36px",
+        }}
+      >
+        Dashboard
+      </h1>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "1px",
+          background: "var(--line)",
+          border: "1px solid var(--line)",
+        }}
+      >
+        {stats.map((s) => (
+          <div
+            className="admin-stat-card"
+            key={s.label}
+            style={{
+              padding: "24px 20px",
+              background: "var(--paper)",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: "11px",
+                letterSpacing: "0.06em",
+                textTransform: "uppercase",
+                color: "var(--muted)",
+                marginBottom: "8px",
+              }}
+            >
+              {s.label}
+            </div>
+            <div
+              style={{
+                fontSize: "36px",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {s.value}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className="admin-quick-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+          gap: "1px",
+          background: "var(--line)",
+          border: "1px solid var(--line)",
+          marginTop: "1px",
+        }}
+      >
+        <Link
+          className="admin-quick-card"
+          href="/admin/projects"
+          style={{
+            padding: "24px 20px",
+            background: "var(--paper)",
+            display: "block",
+            color: "var(--ink)",
+            textDecoration: "none",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Manage
+          </div>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Projects
+          </div>
+        </Link>
+        <Link
+          className="admin-quick-card"
+          href="/admin/posts"
+          style={{
+            padding: "24px 20px",
+            background: "var(--paper)",
+            display: "block",
+            color: "var(--ink)",
+            textDecoration: "none",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: "11px",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Manage
+          </div>
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Posts
+          </div>
+        </Link>
+      </div>
+    </div>
+  );
+}
