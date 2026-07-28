@@ -21,7 +21,11 @@ A personal portfolio, blog, and lightweight admin CMS, built on Next.js (App Rou
    npx prisma migrate deploy
    npx prisma generate
    ```
-4. Run the app:
+4. Seed the required `SiteSettings` row and capabilities:
+   ```bash
+   npx prisma db seed
+   ```
+5. Run the app:
    ```bash
    npm run dev
    ```
