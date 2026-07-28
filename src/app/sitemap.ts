@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/db";
 
+// Match the public routes' ISR window so newly published posts/projects
+// appear in the sitemap without a redeploy (otherwise it's static-forever).
+export const revalidate = 60;
+
 const BASE_URL = "https://ajazizi.dev";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
