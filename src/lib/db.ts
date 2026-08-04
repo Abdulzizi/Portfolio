@@ -16,7 +16,10 @@ function createPrismaClient() {
     // is still encrypted, just not certificate-validated. Only needed for
     // real (non-local-dev) connections.
     ssl: isLocalDev ? undefined : { rejectUnauthorized: false },
-    max: 10,
+    // Serverless: many function instances each open their own pool, so keep
+    // this small — the external pooler (Supabase's transaction-mode pooler
+    // in prod) does the real connection multiplexing, not this pool.
+    max: isLocalDev ? 10 : 3,
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const adapter = new PrismaPg(pool as any);
